@@ -1,0 +1,26 @@
+{% extends 'base.html'%}
+{% block content %}
+
+{% if error %}
+    <style>.purple {color:purple; }</style>
+    <p class = purple>Either the file or the sheet could not be found.</p>
+{% endif %}
+
+<h1>Competencies</h1>
+<table class='table table-striped table-hover table-bordered'>
+    <tr style="background-color: #AC97CC;">
+        <th>Category</th><th>Level</th><th>Description</th><th>Actions</th>
+    </tr>
+    {% for item in list %}
+    <tr>
+        <td>{{ item.category }}</td>
+        <td>{{ item.level }}</td>
+        <td>{{ item.description }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="{% url 'skill_upload' %}" class='btn btn-outline-secondary btn-sm'>Upload Competencies</a><br><br>
+
+
+{% endblock %}

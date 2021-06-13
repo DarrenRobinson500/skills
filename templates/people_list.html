@@ -1,0 +1,15 @@
+{% extends 'base.html'%}
+{% block content %}
+<h1>People</h1>
+<table class='table table-striped table-hover table-bordered'>
+    <tr style="background-color: #AC97CC;">
+    <th>Name</th><th>Manager</th><th>Role</th><th>Actions</th>
+    {% for item in process_list %}
+        <td>item.name</td>
+        <td>item.manager</td>
+        <td>item.role</td>
+    {% endfor %}
+</table>
+
+
+{% endblock %}
