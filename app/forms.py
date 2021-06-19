@@ -5,11 +5,11 @@ from .models import People, Skill, Score, File
 class SkillForm(ModelForm):
     class Meta:
         model = Skill
-        fields = ('description','category','level')
+        fields = ('sub_category','level','question')
         widgets = {
-            'description': forms.Textarea(attrs={'class': 'form-control'}),
-            'category': forms.TextInput(attrs={'class': 'form-control'}),
-            'level': forms.Select(attrs={'class': 'form-control'}),
+            'sub_category': forms.TextInput(attrs={'class': 'form-control'}),
+            'level': forms.TextInput(attrs={'class': 'form-control'}),
+            'question': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
 class PeopleForm(ModelForm):
