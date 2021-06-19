@@ -1,11 +1,9 @@
+from .common import *
 import django_on_heroku
 import dj_database_url
 from decouple import config
-import os
 
 DEBUG = True
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 ALLOWED_HOSTS = ['*']
