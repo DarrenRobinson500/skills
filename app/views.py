@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect
 from django.db.models import Avg
-from .models import People, Skill_Cat, Skill_Level, Skill, Score, File, Target
+from .models import People, Skill_Cat, Skill_Level, Skill, Score, File, Target, Colour
 from .forms import FileForm, SkillForm, PeopleForm
 import openpyxl as xl
-
-current_person = 3
 
 def people_list(request):
     list = People.objects.all().order_by('name')
@@ -45,23 +43,27 @@ def people_ind(request, id):
 
 
 def people_skill_update(request, people_id, sub_category_id, level_id):
-    list = Skill.objects.filter(sub_category=sub_category_id)
+    list = Skill.objects.filter(sub_category=sub_category_id,level=level_id)
+    print(list)
     sub_category = Skill_Cat.objects.filter(id=sub_category_id)[0]
     person = People.objects.get(id=people_id)
     buttons = {1,2,3,4,5}
     if request.method == 'POST':
         for item in list:
-            score = request.POST.__getitem__(str(item.id))
-            existing_query = Score.objects.filter(skill=item,person=person)
-            if existing_query.count() == 0:
-                new_score = Score(skill=item,person=person,score=score)
-                new_score.save()
-            else:
-                existing = existing_query[0]
-                existing.score = score
-                existing.save()
+            try:
+                score = request.POST.__getitem__(str(item.id))
+                existing_query = Score.objects.filter(skill=item,person=person)
+                if existing_query.count() == 0:
+                    new_score = Score(skill=item,person=person,score=score)
+                    new_score.save()
+                else:
+                    existing = existing_query[0]
+                    existing.score = score
+                    existing.save()
+            except:
+                pass
         return redirect('/people_ind/' + people_id)
-    return render(request, 'skill_ind.html', {'list': list,'person':person,'sub_category': sub_category,'buttons':buttons})
+    return render(request, 'people_skill_update.html', {'list': list,'person':person,'sub_category': sub_category,'buttons':buttons})
 
 def people_target_update(request,people_id,sub_category_id,level_id):
     sub_category = Skill_Cat.objects.filter(id=sub_category_id)[0]
@@ -147,8 +149,7 @@ def skill_list(request):
     list = Skill.objects.all()
     rows = Skill_Cat.objects.all()
     levels = Skill_Level.objects.all()
-    person = People.objects.get(id=current_person)
-    return render(request, 'skill_list.html', {'list': list,'rows':rows,'levels':levels,'person':person})
+    return render(request, 'skill_list.html', {'list': list,'rows':rows,'levels':levels})
 
 def skill_ind(request, sub_category_id, level_id):
     list = Skill.objects.filter(sub_category=sub_category_id)
@@ -232,6 +233,58 @@ def skill_upload(request, id):
             new_skill.save()
 
     return redirect('skill_list')
+
+def colour_list(request):
+    list = Colour.objects.all()
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+    return render(request, 'colour_list.html', {'list': list,'colour':colour})
+
+def colour_activate(request, id):
+    active = Colour.objects.filter(active=True)
+    for item in active:
+        item.active = False
+        item.save()
+    new_active = Colour.objects.filter(id=id)[0]
+    new_active.active = True
+    new_active.save()
+    return redirect('colour_list')
+
+def colour_delete_all(request):
+    item = Colour.objects.all()
+    item.delete()
+    return redirect('colour_list')
+
+def colour_upload(request, id):
+    file = File.objects.filter(id=id)[0]
+    path = str(file.document.url)[1:]
+    try:
+        wb = xl.load_workbook(path)
+    except:
+        list = Colour.objects.all().order_by('name')
+        error = True
+        return render(request, 'colour_list.html', {'list': list, 'error': error})
+    sheet = wb.active
+    for row in range(2, sheet.max_row + 1):
+        name = sheet.cell(row, 1).value
+        active = sheet.cell(row, 2).value
+        nav = sheet.cell(row, 3).value
+        primary_dark = sheet.cell(row, 4).value
+        primary_light = sheet.cell(row, 5).value
+        secondary_dark = sheet.cell(row, 6).value
+        secondary_light = sheet.cell(row, 7).value
+
+        if name is not None:
+            Colour(name=name, active=active, nav=nav, primary_dark=primary_dark, primary_light=primary_light,
+                   secondary_dark=secondary_dark, secondary_light=secondary_light).save()
+    return redirect('colour_list')
+
+
+
 
 
 def file_list(request):

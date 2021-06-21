@@ -19,6 +19,9 @@
             {% if item.name == "People" %}
                 <a href="{% url 'people_upload' item.pk %}" class='btn btn-outline-secondary btn-sm'>Upload People</a>
             {% endif %}
+            {% if item.name == "Colours" or item.name == "Colour"%}
+                <a href="{% url 'colour_upload' item.pk %}" class='btn btn-outline-secondary btn-sm'>Upload Colours</a>
+            {% endif %}
         </td>
         <td>
             <form method="post" action="{% url 'file_delete' item.pk %}">

@@ -26,6 +26,11 @@ urlpatterns = [
     path('skill_delete/<id>', views.skill_delete, name='skill_delete'),
     path('skill_delete_all', views.skill_delete_all, name='skill_delete_all'),
 
+    path('colour_list', views.colour_list, name='colour_list'),
+    path('colour_upload/<id>', views.colour_upload, name='colour_upload'),
+    path('colour_activate/<id>', views.colour_activate, name='colour_activate'),
+    path('colour_delete_all', views.colour_delete_all, name='colour_delete_all'),
+
     path('file_list', views.file_list, name='file_list'),
     path('file_upload', views.file_upload, name='file_upload'),
     path('file_delete/<file_id>', views.file_delete, name='file_delete'),
