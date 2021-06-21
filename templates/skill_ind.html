@@ -14,7 +14,7 @@
 
     {% for item in list %}
     <tr>
-    <td>{{ item.id }} {{ item }}</td>
+    <td>{{ item }}</td>
     <td>
         {% for button in buttons %}
         <input class="form-check-input" type="radio" name={{ item.id }} id={{button}} value = {{button}}>

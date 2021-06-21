@@ -34,7 +34,7 @@ class Skill_Level(models.Model):
 class Skill(models.Model):
     sub_category = models.ForeignKey(Skill_Cat, blank=True, null=True, on_delete=models.SET_NULL)
     level = models.ForeignKey(Skill_Level, blank=True, null=True, on_delete=models.SET_NULL)
-    question = models.CharField(max_length=255,null=True, blank=True)
+    question = models.CharField(max_length=500,null=True, blank=True)
     def __str__(self):
         return self.question
 
@@ -52,6 +52,15 @@ class Target(models.Model):
     target = models.ForeignKey(Skill_Level, blank=True, null=True, on_delete=models.SET_NULL)
     def __str__(self):
         return self.target.level
+
+class Colour(models.Model):
+    name = models.CharField(max_length=40,null=True)
+    active = models.BooleanField(default=False,null=True)
+    nav = models.CharField(max_length=10,null=True)
+    primary_dark = models.CharField(max_length=10,null=True)
+    primary_light = models.CharField(max_length=10,null=True)
+    secondary_dark = models.CharField(max_length=10,null=True)
+    secondary_light = models.CharField(max_length=10,null=True)
 
 class File(models.Model):
     name = models.CharField(max_length=100)

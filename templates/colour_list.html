@@ -1,0 +1,28 @@
+{% extends 'base.html'%}
+{% block content %}
+
+{% if error %}
+    <style>.purple {color:purple; }</style>
+    <p class = purple>Either the file or the sheet could not be found.</p>
+{% endif %}
+
+<h1>Colours</h1>
+<table class='table table-striped table-hover table-bordered' style = "text-align:center">
+    <tr style="background-color: #{{colour.primary_dark}}">
+    <th style="text-align:left">Name</th><th>Nav</th><th>Primary Dark</th><th>Primary Light</th><th>Secondary Dark</th><th>Secondary Light</th><th>Active</th>
+    {% for item in list %}
+    <tr>
+        <td style="text-align:left">{{item.name}}</td>
+        <td style="background-color: #{{item.nav}}">{{item.nav}}</td>
+        <td style="background-color: #{{item.primary_dark}}">{{item.primary_dark}}</td>
+        <td style="background-color: #{{item.primary_light}}">{{item.primary_light}}</td>
+        <td style="background-color: #{{item.secondary_dark}}">{{item.secondary_dark}}</td>
+        <td style="background-color: #{{item.secondary_light}}">{{item.secondary_light}}</td>
+        <td> <a href='{% url 'colour_activate' item.id %}' class='btn btn-outline-secondary btn-sm'> Activate </a></td>
+    </tr>
+    {% endfor %}
+</table>
+<td><a href='{% url 'colour_delete_all' %}' class='btn btn-outline-secondary btn-sm'> Delete all </a></td>
+<br><br>
+
+{% endblock %}
