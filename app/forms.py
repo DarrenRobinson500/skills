@@ -5,7 +5,7 @@ from .models import People, Skill, Score, File
 class SkillForm(ModelForm):
     class Meta:
         model = Skill
-        fields = ('sub_category','level','question')
+        fields = ('sub_category','role_level','question')
         widgets = {
             'sub_category': forms.TextInput(attrs={'class': 'form-control'}),
             'level': forms.TextInput(attrs={'class': 'form-control'}),
@@ -15,11 +15,12 @@ class SkillForm(ModelForm):
 class PeopleForm(ModelForm):
     class Meta:
         model = People
-        fields = ('name','manager','role')
+        fields = ('name','manager','role','role_level')
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'manager': forms.Select(attrs={'class': 'form-control'}),
             'role': forms.TextInput(attrs={'class': 'form-control'}),
+            'role_level': forms.Select(attrs={'class': 'form-control'}),
         }
 
 class FileForm(ModelForm):

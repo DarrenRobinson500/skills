@@ -12,12 +12,18 @@
             <a href="{{ item.document.url }}" target="_blank">{{ item.document.url }}</a>
         </td>
         <td>
-            {% if item.name == "Skills" %}
+            {% if item.name == "Skills" or item.name == "Skill" %}
                 <a href="{% url 'skill_cat_upload' item.pk %}" class='btn btn-outline-secondary btn-sm'>Upload Competencies Categories</a><br>
                 <a href="{% url 'skill_upload' item.pk %}" class='btn btn-outline-secondary btn-sm'>Upload Competencies</a>
             {% endif %}
             {% if item.name == "People" %}
                 <a href="{% url 'people_upload' item.pk %}" class='btn btn-outline-secondary btn-sm'>Upload People</a>
+            {% endif %}
+            {% if item.name == "Levels" or item.name == "Level" %}
+                <a href="{% url 'level_upload' item.pk %}" class='btn btn-outline-secondary btn-sm'>Upload Levels</a>
+            {% endif %}
+            {% if item.name == "Roles" or item.name == "Role" %}
+                <a href="{% url 'role_upload' item.pk %}" class='btn btn-outline-secondary btn-sm'>Upload Roles</a>
             {% endif %}
             {% if item.name == "Colours" or item.name == "Colour"%}
                 <a href="{% url 'colour_upload' item.pk %}" class='btn btn-outline-secondary btn-sm'>Upload Colours</a>
