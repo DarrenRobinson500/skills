@@ -1,10 +1,12 @@
 {% extends 'base.html'%}
 {% block content %}
 
-<h1>Competency Table: {{person.name}} ({{person.role_level}})</h1>
+<h1>Competency Table: {{person.name}}
+    {% if person.role_level is None %} <br>(No role level allocated: to update go to People list then press "Update")
+    {% else %} ({{person.role_level}}) {% endif %} </h1>
 <table class='table table-striped table-hover table-bordered'>
     <tr style="background-color: #{{colour.primary_dark}};">
-        <th>Category</th><th>Sub-category</th><th>Update</th><th>To develop</th><th style="background-color: #{{colour.secondary_dark}}; text-align:center; min-width:130px">Target</th>
+        <th>Category</th><th>Sub-category</th><th>Update</th><th>To develop</th>
 
     </tr>
     {% for item in sub_categories %}
@@ -14,23 +16,23 @@
         <td><a href='{% url 'people_skill_update' person.id item.id %}' class='btn btn-outline-secondary btn-sm'>Update</a></td>
         <td>{{ item.to_develop|linebreaks }} </td>
 
-    {% for role in roles %}
-            <td style="text-align:center">
-                <a href='{% url 'people_skill_update' person.id item.id level.id %}' class='btn btn-outline-secondary btn-sm'>
-                {% if forloop.counter == 1 %} {% if item.score1 == 0 %} {% else %} {{item.score1}} / 5.0 {% endif %} {% endif %}
-                {% if forloop.counter == 2 %} {% if item.score2 == 0 %} {% else %} {{item.score2}} / 5.0 {% endif %} {% endif %}
-                {% if forloop.counter == 3 %} {% if item.score3 == 0 %} {% else %} {{item.score3}} / 5.0 {% endif %} {% endif %}
-                {% if forloop.counter == 4 %} {% if item.score4 == 0 %} {% else %} {{item.score4}} / 5.0 {% endif %} {% endif %}
-            </a></td>
-    {% endfor %}
-    <td {% ifchanged item.category %} style="background-color: #{{colour.secondary_dark}};text-align:center" {% else %} style="background-color:#{{colour.secondary_light}};text-align:center"{% endifchanged %}>
-        <a href='{% url 'people_target_update' person.id item.id "0" %}' class='btn btn-outline-secondary btn-sm'>F</a>
-        <a href='{% url 'people_target_update' person.id item.id "1" %}' class='btn btn-outline-secondary btn-sm'>I</a>
-        <a href='{% url 'people_target_update' person.id item.id "2" %}' class='btn btn-outline-secondary btn-sm'>A</a>
-        <a href='{% url 'people_target_update' person.id item.id "3" %}' class='btn btn-outline-secondary btn-sm'>E</a>
-        <br><b>{{ item.target }}</b>
-        </a>
-    </td>
+<!--    {% for role in roles %}-->
+<!--            <td style="text-align:center">-->
+<!--                <a href='{% url 'people_skill_update' person.id item.id level.id %}' class='btn btn-outline-secondary btn-sm'>-->
+<!--                {% if forloop.counter == 1 %} {% if item.score1 == 0 %} {% else %} {{item.score1}} / 5.0 {% endif %} {% endif %}-->
+<!--                {% if forloop.counter == 2 %} {% if item.score2 == 0 %} {% else %} {{item.score2}} / 5.0 {% endif %} {% endif %}-->
+<!--                {% if forloop.counter == 3 %} {% if item.score3 == 0 %} {% else %} {{item.score3}} / 5.0 {% endif %} {% endif %}-->
+<!--                {% if forloop.counter == 4 %} {% if item.score4 == 0 %} {% else %} {{item.score4}} / 5.0 {% endif %} {% endif %}-->
+<!--            </a></td>-->
+<!--    {% endfor %}-->
+<!--    <td {% ifchanged item.category %} style="background-color: #{{colour.secondary_dark}};text-align:center" {% else %} style="background-color:#{{colour.secondary_light}};text-align:center"{% endifchanged %}>-->
+<!--        <a href='{% url 'people_target_update' person.id item.id "0" %}' class='btn btn-outline-secondary btn-sm'>F</a>-->
+<!--        <a href='{% url 'people_target_update' person.id item.id "1" %}' class='btn btn-outline-secondary btn-sm'>I</a>-->
+<!--        <a href='{% url 'people_target_update' person.id item.id "2" %}' class='btn btn-outline-secondary btn-sm'>A</a>-->
+<!--        <a href='{% url 'people_target_update' person.id item.id "3" %}' class='btn btn-outline-secondary btn-sm'>E</a>-->
+<!--        <br><b>{{ item.target }}</b>-->
+<!--        </a>-->
+<!--    </td>-->
     </tr>
     {% endfor %}
 </table><br><br>
