@@ -5,10 +5,84 @@ from .forms import FileForm, SkillForm, PeopleForm
 import openpyxl as xl
 
 def people_list(request):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     list = People.objects.all().order_by('name')
-    return render(request, 'people_list.html', {'list': list})
+    return render(request, 'people_list.html', {'list': list, 'colour':colour})
+
+def people_team(request, id):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
+    person = People.objects.get(id=id)
+    team1 = People.objects.filter(manager=person)
+    team2 = People.objects.none()
+    for member in team1:
+        team2 = team2 | People.objects.filter(manager=member)
+    team3 = People.objects.none()
+    for member in team2:
+        team3 = team3 | People.objects.filter(manager=member)
+    team4 = People.objects.none()
+    for member in team3:
+        team4 = team4 | People.objects.filter(manager=member)
+    team5 = People.objects.none()
+    for member in team4:
+        team5 = team5 | People.objects.filter(manager=member)
+    team = team1 | team2 | team3 | team4 | team5
+
+    skills = Skill.objects.all()
+    levels = Skill_Level.objects.all()
+
+
+    for skill in skills:
+        skill.text0_temp = ""
+        skill.text1_temp = ""
+        skill.text2_temp = ""
+        skill.text3_temp = ""
+        skill.text4_temp = ""
+        skill.text5_temp = ""
+
+    for member in team:
+        for skill in skills:
+            score_obj = Score.objects.filter(person=member,skill=skill)
+            if score_obj.count() == 0:
+                score = 0
+            else:
+                score_obj = score_obj[0]
+                score = score_obj.score
+            if score == 0: skill.text0_temp += member.name + chr(13)
+            if score == 1: skill.text1_temp += member.name + chr(13)
+            if score == 2: skill.text2_temp += member.name + chr(13)
+            if score == 3: skill.text3_temp += member.name + chr(13)
+            if score == 4: skill.text4_temp += member.name + chr(13)
+            if score == 5: skill.text5_temp += member.name + chr(13)
+            skill.save()
+
+    for skill in skills:
+        print(skill.question)
+
+
+    return render(request, "people_team.html", {'person':person, 'team':team, 'skills': skills, 'levels':levels, 'colour':colour})
+
+
 
 def people_ind(request, id):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     list = Skill.objects.all()
     levels = Skill_Level.objects.all()
     sub_categories = Skill_Cat.objects.all()
@@ -56,10 +130,17 @@ def people_ind(request, id):
             sub_category.target = Target.objects.filter(person=person,sub_cat=sub_category)[0].target.level
             sub_category.save()
 
-    return render(request, 'people_ind.html', {'list': list,'sub_categories':sub_categories,'person':person,'scores':scores})
+    return render(request, 'people_ind.html', {'list': list,'sub_categories':sub_categories,'person':person,'scores':scores,'colour':colour})
 
 
 def people_skill_update(request, people_id, sub_category_id):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     list = Skill.objects.filter(sub_category=sub_category_id)
     sub_category = Skill_Cat.objects.filter(id=sub_category_id)[0]
     person = People.objects.get(id=people_id)
@@ -70,6 +151,8 @@ def people_skill_update(request, people_id, sub_category_id):
             result = Score.objects.filter(person=person, skill=skill)[0].score
             skill.score_temp = result
             skill.save()
+        else:
+            skill.score_temp = None
 
     if request.method == 'POST':
         for item in list:
@@ -87,7 +170,7 @@ def people_skill_update(request, people_id, sub_category_id):
                 pass
         return redirect('/people_ind/' + people_id)
     return render(request, 'people_skill_update.html', {'list': list,'person':person,'sub_category': sub_category,
-                                                        'levels':levels, 'buttons':buttons})
+                                                        'levels':levels, 'buttons':buttons,'colour':colour})
 
 def people_target_update(request,people_id,sub_category_id,level_id):
     sub_category = Skill_Cat.objects.filter(id=sub_category_id)[0]
@@ -103,38 +186,20 @@ def people_target_update(request,people_id,sub_category_id,level_id):
         target_obj.save()
     return redirect('/people_ind/' + people_id)
 
-
-
-def people_target_update_old(request,people_id,sub_category_id):
-    sub_categories = Skill_Cat.objects.filter(id=sub_category_id)
-    person = People.objects.get(id=people_id)
-    levels = Skill_Level.objects.all()
-    for sub_category in sub_categories:
-        if Target.objects.filter(sub_cat=sub_category,person=person).count() == 0:
-            level=levels[0]
-            new_target = Target(sub_cat=sub_category,person=person,target=level)
-            new_target.save()
-        current = Target.objects.filter(sub_cat=sub_category,person=person)[0].target
-        for count, level in enumerate(levels):
-            found = 0
-            if current == level:
-                found = count
-            allocate = found + 1
-            if allocate == 4:
-                allocate = 0
-            current.target = levels[allocate]
-            current.save()
-            print(levels[allocate], current.target, current, current.target.level)
-    return redirect('/people_ind/' + people_id)
-
-
 def people_update(request, id):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     item = People.objects.get(pk=id)
     form = PeopleForm(request.POST or None, instance=item)
     if form.is_valid():
         form.save()
         return redirect('people_list')
-    return render(request, 'update.html', {'item': item, 'form': form})
+    return render(request, 'update.html', {'item': item, 'form': form,'colour':colour})
 
 def people_delete(request, id):
     item = People.objects.get(pk=id)
@@ -170,31 +235,59 @@ def people_upload(request, id):
     return redirect('people_list')
 
 def skill_list(request):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     list = Skill.objects.all()
     rows = Skill_Cat.objects.all()
     levels = Skill_Level.objects.all()
-    return render(request, 'skill_list.html', {'list': list,'rows':rows,'levels':levels})
+    return render(request, 'skill_list.html', {'list': list,'rows':rows,'levels':levels,'colour':colour})
 
 def level_list(request):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     list = Skill_Level.objects.all()
     list2 = Role_Level.objects.all()
-    return render(request, 'level_list.html', {'list': list,'list2': list2})
+    return render(request, 'level_list.html', {'list': list,'list2': list2,'colour':colour})
 
 def skill_ind(request, sub_category_id, level_id):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     list = Skill.objects.filter(sub_category=sub_category_id)
     sub_category = Skill_Cat.objects.filter(id=sub_category_id)[0]
     buttons = {1,2,3,4,5}
     if request.method == 'POST':
         return redirect('skill_list')
-    return render(request, 'skill_ind.html', {'list': list,'sub_category': sub_category,'buttons':buttons})
+    return render(request, 'skill_ind.html', {'list': list,'sub_category': sub_category,'buttons':buttons,'colour':colour})
 
 def skill_update(request, id):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     item = Skill.objects.get(pk=id)
     form = SkillForm(request.POST or None, instance=item)
     if form.is_valid():
         form.save()
         return redirect('skill_list')
-    return render(request, 'update.html', {'item': item, 'form': form})
+    return render(request, 'update.html', {'item': item, 'form': form,'colour':colour})
 
 def skill_delete(request, id):
     item = Skill.objects.get(pk=id)
@@ -235,7 +328,7 @@ def level_upload(request, id):
         wb = xl.load_workbook(path)
     except:
         list = Skill_Level.objects.all()
-        list2 = _Level.objects.all()
+        list2 = Role_Level.objects.all()
         error = True
         return render(request, 'skill_list.html', {'list': list, 'list2': list2, 'error': error})
     sheet = wb.active
@@ -256,7 +349,7 @@ def role_upload(request, id):
         wb = xl.load_workbook(path)
     except:
         list = Skill_Level.objects.all()
-        list2 = _Level.objects.all()
+        list2 = Role_Level.objects.all()
         error = True
         return render(request, 'skill_list.html', {'list': list, 'list2': list2, 'error': error})
     sheet = wb.active
@@ -265,8 +358,8 @@ def role_upload(request, id):
         role = sheet.cell(row, 1).value
         if role == None:
             role = "No level"
-        if Role_Level.objects.all().filter(role=role).count() == 0 and role is not None:
-            role_obj = Role_Level(role=role)
+        if Role_Level.objects.all().filter(role_level=role).count() == 0 and role is not None:
+            role_obj = Role_Level(role_level=role)
             role_obj.save()
     return redirect('level_list')
 
@@ -356,15 +449,25 @@ def colour_upload(request, id):
                    secondary_dark=secondary_dark, secondary_light=secondary_light).save()
     return redirect('colour_list')
 
-
-
-
-
 def file_list(request):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     list = File.objects.all().order_by('name')
-    return render(request, 'file_list.html', {'list': list})
+    return render(request, 'file_list.html', {'list': list,'colour':colour})
 
 def file_upload(request):
+    if Colour.objects.filter(active=True).count() > 0:
+        colour = Colour.objects.filter(active=True)[0]
+    elif Colour.objects.all().count() > 0:
+        colour = Colour.objects.all()[0]
+    else:
+        colour = Colour().save()
+
     if request.method == 'POST':
         form = FileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -372,7 +475,7 @@ def file_upload(request):
             return redirect('file_list')
     else:
         form = FileForm()
-    return render(request, 'file_upload.html',{'form':form})
+    return render(request, 'file_upload.html',{'form':form,'colour':colour})
 
 def file_delete(request, file_id):
     if request.method == 'POST':

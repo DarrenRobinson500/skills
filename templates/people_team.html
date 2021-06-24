@@ -1,0 +1,39 @@
+{% extends 'base.html'%}
+{% block content %}
+<h1>{{person}}'s Team</h1>
+<table class='table table-striped table-hover table-bordered'>
+    <tr style="background-color: #{{colour.primary_dark}};">
+    <th>Name</th><th>Manager</th><th>Role</th>
+    {% for item in team %}
+    <tr>
+        <td><a href='{% url 'people_ind' item.id %}'> {{ item.name }}</td>
+        <td>{% if item.manager is not None %} {{ item.manager }} {% endif %}</td>
+        <td>{{ item.role }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<table class='table table-striped table-hover table-bordered'>
+    <tr style="background-color: #{{colour.primary_dark}};">
+    <th>Skill</th><th>No Response</th>
+   {% for level in levels %}<th style="min-width:130px">{{level}}</th>{% endfor %}
+
+   {% for item in skills %}
+    {% ifchanged item.sub_category.sub_category %}
+        <tr style="background-color: #{{colour.primary_light}};"> <td colspan="7"> {{ item.sub_category }} </td> </tr>
+    {% endifchanged %}
+    <tr>
+        <td> {{ item.question }} </td>
+        <td> {{ item.text0_temp | linebreaks }} </td>
+        <td> {{ item.text1_temp | linebreaks }} </td>
+        <td> {{ item.text2_temp | linebreaks }} </td>
+        <td> {{ item.text3_temp | linebreaks }} </td>
+        <td> {{ item.text4_temp | linebreaks }} </td>
+        <td> {{ item.text5_temp | linebreaks }} </td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+
+{% endblock %}

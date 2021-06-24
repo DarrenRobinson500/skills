@@ -8,12 +8,12 @@
 
 <h1>Competency Table</h1>
 <table class='table table-striped table-hover table-bordered'>
-    <tr style="background-color: #AC97CC;">
+    <tr style="background-color: #{{colour.primary_dark}};">
         <th>Category</th><th>Sub-category</th><th>Delete</th>
 
     </tr>
     {% for item in rows %}
-    <tr{% ifchanged item.category %} style="background-color: #D7CCE6;" {% endifchanged %}>
+    <tr{% ifchanged item.category %} style="background-color: #{{colour.primary_light}};" {% endifchanged %}>
         <td>{{ item.category }}</td>
         <td>{{ item.sub_category }}</td>
         <td><a href='{% url 'skill_delete' item.id %}' class='btn btn-outline-secondary btn-sm'> Delete </a></td>
@@ -24,11 +24,11 @@
 
 <h1>Competencies</h1>
 <table class='table table-striped table-hover table-bordered'>
-    <tr style="background-color: #AC97CC;">
+    <tr style="background-color: #{{colour.primary_dark}};">
         <th>Category</th><th>Sub-category</th><th>Question</th><th>Actions</th><th>Delete</th>
     </tr>
     {% for item in list %}
-    <tr{% ifchanged item.sub_category.category %} style="background-color: #D7CCE6;" {% endifchanged %}>
+    <tr{% ifchanged item.sub_category.sub_category %} style="background-color: #{{colour.primary_light}};" {% endifchanged %}>
         <td> {{ item.sub_category.category }} </td>
         <td> {{ item.sub_category }}  </td>
         <td> {{ item.question }}</td>

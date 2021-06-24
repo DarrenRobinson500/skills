@@ -3,12 +3,12 @@
 
 <h1>Competency Table: {{person.name}} ({{person.role_level}})</h1>
 <table class='table table-striped table-hover table-bordered'>
-    <tr style="background-color: #AC97CC;">
-        <th>Category</th><th>Sub-category</th><th>Update</th><th>To develop</th><th style="background-color: #ff7800; text-align:center; min-width:130px">Target</th>
+    <tr style="background-color: #{{colour.primary_dark}};">
+        <th>Category</th><th>Sub-category</th><th>Update</th><th>To develop</th><th style="background-color: #{{colour.secondary_dark}}; text-align:center; min-width:130px">Target</th>
 
     </tr>
     {% for item in sub_categories %}
-    <tr{% ifchanged item.category %} style="background-color: #D7CCE6;" {% endifchanged %}>
+    <tr{% ifchanged item.category %} style="background-color: #{{colour.primary_light}};" {% endifchanged %}>
         <td>{{ item.category }}</td>
         <td>{{ item.sub_category }}</td>
         <td><a href='{% url 'people_skill_update' person.id item.id %}' class='btn btn-outline-secondary btn-sm'>Update</a></td>
@@ -23,7 +23,7 @@
                 {% if forloop.counter == 4 %} {% if item.score4 == 0 %} {% else %} {{item.score4}} / 5.0 {% endif %} {% endif %}
             </a></td>
     {% endfor %}
-    <td {% ifchanged item.category %} style="background-color: #FFAC62;text-align:center" {% else %} style="background-color:#FFD1A8;text-align:center"{% endifchanged %}>
+    <td {% ifchanged item.category %} style="background-color: #{{colour.secondary_dark}};text-align:center" {% else %} style="background-color:#{{colour.secondary_light}};text-align:center"{% endifchanged %}>
         <a href='{% url 'people_target_update' person.id item.id "0" %}' class='btn btn-outline-secondary btn-sm'>F</a>
         <a href='{% url 'people_target_update' person.id item.id "1" %}' class='btn btn-outline-secondary btn-sm'>I</a>
         <a href='{% url 'people_target_update' person.id item.id "2" %}' class='btn btn-outline-secondary btn-sm'>A</a>

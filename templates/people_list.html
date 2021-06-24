@@ -2,13 +2,14 @@
 {% block content %}
 <h1>People</h1>
 <table class='table table-striped table-hover table-bordered'>
-    <tr style="background-color: #AC97CC;">
-    <th>Name</th><th>Manager</th><th>Role</th><th>Actions</th><th>Delete</th>
+    <tr style="background-color: #{{colour.primary_dark}};">
+    <th>Name</th><th>Manager</th><th>Role</th><th>Team</th><th>Actions</th><th>Delete</th>
     {% for item in list %}
     <tr>
         <td><a href='{% url 'people_ind' item.id %}'> {{ item.name }}</td>
         <td>{% if item.manager is not None %} {{ item.manager }} {% endif %}</td>
         <td>{{ item.role }}</td>
+        <td><a href='{% url 'people_team' item.id %}' class='btn btn-outline-secondary btn-sm'> Team </a></td>
         <td><a href='{% url 'people_update' item.id %}' class='btn btn-outline-secondary btn-sm'> Update </a></td>
         <td><a href='{% url 'people_delete' item.id %}' class='btn btn-outline-secondary btn-sm'> Delete </a></td>
     </tr>

@@ -4,7 +4,7 @@
 <h1>Files</h1>
 <a href="{% url 'file_upload' %}" class='btn btn-outline-secondary btn-sm'>New File</a><br><br>
 <table class='table table-striped table-hover table-bordered'>
-    <tr style="background-color: #AC97CC;"><th>Name</th><th>File</th><th>Load into Database</th><th>Delete</th></tr>
+    <tr style="background-color: #{{colour.primary_dark}};"><th>Name</th><th>File</th><th>Load into Database</th><th>Delete</th></tr>
     {% for item in list %}
     <tr>
         <td> {{item.name }} </td>

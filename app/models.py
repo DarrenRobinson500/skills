@@ -59,6 +59,12 @@ class Skill(models.Model):
     role_level = models.ForeignKey(Role_Level, blank=True, null=True, on_delete=models.SET_NULL)
     question = models.CharField(max_length=500,null=True, blank=True)
     score_temp = models.IntegerField(null=True)
+    text0_temp = models.CharField(max_length=255,null=True, blank=True)
+    text1_temp = models.CharField(max_length=255,null=True, blank=True)
+    text2_temp = models.CharField(max_length=255,null=True, blank=True)
+    text3_temp = models.CharField(max_length=255,null=True, blank=True)
+    text4_temp = models.CharField(max_length=255,null=True, blank=True)
+    text5_temp = models.CharField(max_length=255,null=True, blank=True)
     def __str__(self):
         return self.question
     def level(self):
