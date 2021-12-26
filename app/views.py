@@ -5,6 +5,10 @@ from .forms import FileForm, SkillForm, PeopleForm
 from .filters import *
 import openpyxl as xl
 
+def notes_list(request):
+    return render(request, 'notes_list.html', {})
+
+
 def people_list(request):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -14,7 +18,8 @@ def people_list(request):
         colour = Colour().save()
 
     list = People.objects.all().order_by('name')
-    filter = PeopleFilter()
+    # filter = PeopleFilter()
+    filter = None
     return render(request, 'people_list.html', {'list': list, 'filter':filter, 'colour':colour})
 
 def people_team(request, id):
