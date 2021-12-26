@@ -13,6 +13,7 @@ DJANGO_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app',
+    'django_filters'
 ]
 THIRD_PARTY_APPS = [
     'import_export',

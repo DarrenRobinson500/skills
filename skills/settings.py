@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -112,18 +113,15 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 #DEFAULT_FILE_STORAGE = BASE_DIR / 'media/files'
 
-<<<<<<< HEAD:skills/settings/common.py
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_pro')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-=======
 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
->>>>>>> colours:skills/settings.py

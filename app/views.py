@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Avg
 from .models import People, Skill_Cat, Skill_Level, Skill, Score, File, Target, Colour, Role_Level
 from .forms import FileForm, SkillForm, PeopleForm
+from .filters import *
 import openpyxl as xl
 
 def people_list(request):
@@ -13,7 +14,8 @@ def people_list(request):
         colour = Colour().save()
 
     list = People.objects.all().order_by('name')
-    return render(request, 'people_list.html', {'list': list, 'colour':colour})
+    filter = PeopleFilter()
+    return render(request, 'people_list.html', {'list': list, 'filter':filter, 'colour':colour})
 
 def people_team(request, id):
     if Colour.objects.filter(active=True).count() > 0:
