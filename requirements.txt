@@ -48,8 +48,6 @@ python-decouple==3.4
 python-docx==0.8.10
 python-jose==3.2.0
 pytweening==1.0.4
-pytz==2021.1
-pywin32==301
 PyYAML==5.4.1
 requests==2.25.1
 rsa==4.7.2
