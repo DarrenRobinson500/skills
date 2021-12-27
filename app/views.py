@@ -11,6 +11,9 @@ def notes_list(request):
 
 def calendar(request):
     items = Note.objects.exclude(date__isnull=True).exclude(type="Meeting").exclude(type="Person").exclude(status="Complete").order_by('date')
+    bdays = Note.objects.filter(type="Person").exclude(date__isnull=True)
+    items = items | bdays
+    items = sorted(items, key=lambda t: t.calendar_date())
 
     return render(request, 'calendar.html', {'items': items})
 
@@ -53,16 +56,24 @@ def delete(request,id):
     if parent is None: return(redirect("notes_list"))
     return redirect("/ind/" + str(parent.id))
 
+def complete(request,id):
+    item = Note.objects.get(id=id)
+    item.status = "Complete"
+    item.save()
+    return redirect("calendar")
+
+
+
 def get_types(type):
     types = None
     if type == "Person":
         # type, Table Heading
-        types = [("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
+        types = [("ToDo", "ToDo"), ("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
                  ("ToDo", "ToDo"), ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
     if type == "Group":
         # type, Table Heading
-        types = [("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
-                 ("ToDo", "ToDo"), ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
+        types = [("ToDo", "ToDo"), ("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
+                 ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
     if type == "Objective":
         # type, Table Heading
         types = [("ToDo", "ToDo"), ("Reminder", "Reminders"),]

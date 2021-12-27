@@ -1,4 +1,7 @@
 from django.db import models
+import datetime
+from datetime import datetime, timedelta, date
+
 
 class Role_Level(models.Model):
     role_level = models.CharField('Description', max_length=255,null=True, blank=True)
@@ -148,5 +151,13 @@ class Note(models.Model):
         while parent is not None:
             name = parent.name + "/" + name
             parent = parent.parent
-
         return name
+
+    def calendar_date(self):
+        if self.type != "Person": return self.date
+        bday = self.date
+        current_year = date.today().year
+        bday_this_year = date(current_year, bday.month, bday.day)
+        bday_next_year = date(current_year + 1, bday.month, bday.day)
+        if date.today() > bday_this_year: return bday_next_year
+        else: return bday_this_year

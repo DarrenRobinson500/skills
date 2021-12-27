@@ -9,6 +9,8 @@
     <a href='{% url 'ind' item.parent.id %}' class='btn btn-outline-secondary btn-sm'>Back to {{ item.parent }}</a>
 {% endif %}
 </h1>
+{{ item.next_birthday |date:"j M Y"}}
+
 <p>{{item.description|linebreaksbr}}</p>
     <form action='' method=POST>
         {% csrf_token %}
