@@ -14,6 +14,7 @@ urlpatterns = [
     path('new/<type>/<parent_id>', views.new, name='new'),
     path('new/<type>/<parent_id>/<return_page>', views.new, name='new'),
     path('ind/<id>', views.ind, name='ind'),
+    path('parent/<id>', views.parent, name='parent'),
     path('delete/<id>', views.delete, name='delete'),
     path('complete/<id>', views.complete, name='complete'),
 

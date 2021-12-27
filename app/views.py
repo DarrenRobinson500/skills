@@ -35,6 +35,7 @@ def get_form(request, type, item):
 def new(request, type=None, parent_id=None, return_page=None):
     if type is None: type = "Note"
     form = get_form(request, type, None)
+    heading = "New "
     if form.is_valid():
         new = form.save()
         if type is not None: new.type = type
@@ -47,7 +48,7 @@ def new(request, type=None, parent_id=None, return_page=None):
         new.save()
         if return_page is None: return redirect("notes_list")
         return redirect("/ind/" + str(return_page))
-    return render(request, "new.html", {"type": type, "form": form})
+    return render(request, "new.html", {"type": type, "heading": heading, "form": form})
 
 def delete(request,id):
     item = Note.objects.get(id=id)
@@ -71,12 +72,10 @@ def get_types(type):
         types = [("ToDo", "ToDo"), ("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
                  ("ToDo", "ToDo"), ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
     if type == "Group":
-        # type, Table Heading
         types = [("ToDo", "ToDo"), ("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
                  ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
     if type == "Objective":
-        # type, Table Heading
-        types = [("ToDo", "ToDo"), ("Reminder", "Reminders"),]
+        types = [("ToDo", "ToDo"), ("Objective", "Objectives"), ("Issue", "Issues"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
     return types
 
 def ind(request, id):
@@ -87,6 +86,19 @@ def ind(request, id):
         form.save()
 
     return render(request, "ind.html", {"item": item, "types": types, "form": form})
+
+def parent(request, id):
+    item = Note.objects.get(id=id)
+    form = ParentForm(request.POST or None, instance=item)
+    heading = "Change parent of "
+    if form.is_valid():
+        form.save()
+        return redirect("/ind/" + str(id))
+
+
+    return render(request, "new.html", {"item": item, "heading": heading, "form": form})
+
+
 
 def people_list(request):
     if Colour.objects.filter(active=True).count() > 0:

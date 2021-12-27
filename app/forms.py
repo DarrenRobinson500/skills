@@ -12,6 +12,7 @@ WIDGETS = {
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'actions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'type': forms.Select(attrs={'class': 'form-control'}),
+            'parent': forms.Select(attrs={'class': 'form-control'}),
             "date": forms.DateInput(attrs={"class": "form-control", 'type': 'date'}),
             'status': forms.Select(attrs={'class': 'form-control'}),
 }
@@ -53,6 +54,17 @@ class ToDoForm(ModelForm):
     class Meta:
         model = Note
         fields = ('date', 'name','description','status',)
+        widgets = WIDGETS
+
+class ParentForm(ModelForm):
+    parent = forms.ModelChoiceField(
+        queryset=Note.objects.all().order_by('name'),
+        required=False,
+        label="Parent", widget=forms.Select(attrs={"class": "form-control"}),
+    )
+    class Meta:
+        model = Note
+        fields = ('parent',)
         widgets = WIDGETS
 
 class GroupForm(ModelForm):

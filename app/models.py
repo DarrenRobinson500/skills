@@ -120,6 +120,7 @@ class File(models.Model):
         super().delete(*args, **kwargs)
 
 TYPES = [("Person","Person"), ("Objective","Objective"), ("Story","Story"), ("Issue","Issue"), ("To Do","To Do"), ("Group","Group"), ("Reminder","Reminder"), ("Meeting","Meeting"), ]
+TYPES_ORDER = {"Person":1, "Objective":2, "Story":3, "Issue":4, "ToDo":5, "Group":0, "Reminder":6, "Meeting":7, }
 STATUS = [("Open","Open"), ("Complete","Complete"),  ]
 
 class Note(models.Model):
@@ -143,7 +144,19 @@ class Note(models.Model):
 
     def children(self):
         children = Note.objects.filter(parent=self).order_by('-time_stamp')
+        children = sorted(children, key=lambda t: t.type_order())
         return children
+
+    def type_x(self):
+        if self.type == "Person": return ""
+        return "[" + self.type + "]"
+
+    def type_order(self):
+        return TYPES_ORDER[self.type]
+
+    def has_children(self):
+        if self.children is None: return False
+        return True
 
     def full_name(self):
         parent = self.parent
