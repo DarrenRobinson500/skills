@@ -1,6 +1,79 @@
 from django import forms
 from django.forms import ModelForm
-from .models import People, Skill, Score, File
+from .models import *
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
+
+
+
+WIDGETS = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'actions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'type': forms.Select(attrs={'class': 'form-control'}),
+            "date": forms.DateInput(attrs={"class": "form-control", 'type': 'date'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
+}
+
+class BaseForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('name','description','type')
+        widgets = WIDGETS
+
+class PersonForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('name','date')
+        labels = {'date': 'Birthday',}
+
+        widgets = WIDGETS
+
+class ObjectiveForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('name','description',)
+        widgets = WIDGETS
+
+class StoryForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('name','description',)
+        labels = {'description': 'Story',}
+        widgets = WIDGETS
+
+class IssueForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('name','description',)
+        widgets = WIDGETS
+
+class ToDoForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('date', 'name','description','status',)
+        widgets = WIDGETS
+
+class GroupForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('name','description',)
+        widgets = WIDGETS
+
+class ReminderForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('date', 'name','description','status')
+        widgets = WIDGETS
+
+class MeetingForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('date', 'name','description', 'actions')
+        labels = {'description': 'Notes',}
+        widgets = WIDGETS
+
 
 class SkillForm(ModelForm):
     class Meta:

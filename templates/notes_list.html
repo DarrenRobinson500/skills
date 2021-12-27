@@ -2,6 +2,19 @@
 {% block content %}
 
 <h1>Notes</h1>
-
+<a href='{% url 'new' %}' class='btn btn-outline-secondary btn-sm'>New</a>
+<table class='table table-striped table-hover table-bordered'>
+    <tr><th>Item</th><th>Description</th><th>Action</th></tr>
+    {% for x in items %}
+    <tr>
+        <td>
+            <a href='{% url 'ind' x.id %}' >{{x}}</a>
+        </td>
+        <td>
+            {{x.description}}
+        </td>
+        <td></td>
+    </tr>
+    {% endfor %}
 <br><br>
 {% endblock %}

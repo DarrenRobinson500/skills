@@ -1,0 +1,36 @@
+{% extends 'base.html'%}
+{% block content %}
+{% load static %}
+
+<h1>New {{type}}</h1>
+<br>
+    <form action='' method=POST>
+    {% csrf_token %}
+        <table class="table table-striped table-hover table-bordered">
+              <colgroup>
+                <col style="background-color:#{{colour3x}}">
+                <col style="background-color:#{{colour3x}}">
+              </colgroup>
+
+            {% for x in form %}
+            <tr>
+                <td style="width:50%">
+                    {{ x.label }}
+                    {{ x }}
+                </td>
+                <td>
+                    <br>
+                    {{ x.help_text }}
+                </td>
+            </tr>
+            {% endfor %}
+            </tr>
+        </table>
+    <input type = 'submit' value = 'Save' class='btn btn-outline-secondary btn-sm'>
+    </form>
+<br><br>
+
+
+<script src={% static 'new_support.js' %} ></script>
+
+{% endblock %}

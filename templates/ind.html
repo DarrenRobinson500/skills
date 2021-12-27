@@ -1,0 +1,52 @@
+{% extends 'base.html'%}
+{% block content %}
+{% load static %}
+{{item.full_name}} [{{item.type}}]
+<h1>{{item}}
+{% if item.parent is None %}
+    <a href='{% url 'notes_list' %}' class='btn btn-outline-secondary btn-sm'>Back to List</a>
+{% else %}
+    <a href='{% url 'ind' item.parent.id %}' class='btn btn-outline-secondary btn-sm'>Back to {{ item.parent }}</a>
+{% endif %}
+</h1>
+<p>{{item.description|linebreaksbr}}</p>
+    <form action='' method=POST>
+        {% csrf_token %}
+        <table class="table table-striped table-hover table-bordered">
+            {% for x in form %}
+            <tr>
+                <td style="width:50%">{{ x.label }}{{ x }}</td>
+                <td><br>{{ x.help_text }}</td>
+            </tr>
+            {% endfor %}
+            </tr>
+        </table>
+        <input type = 'submit' value = 'Update' class='btn btn-outline-secondary btn-sm'>
+    </form>
+
+
+
+{% for x, xp in types %}
+<h3>{{xp}} <a href='{% url 'new' x item.id item.id %}' class='btn btn-outline-secondary btn-sm'>New {{x}}</a></h3>
+<table class='table table-striped table-hover table-bordered'>
+    <tr><th>Item</th><th>Description</th><th>Action</th></tr>
+    {% for y in item.children %}
+    {% if y.type == x %}
+    <tr>
+        <td>
+            <a href='{% url 'ind' y.id %}' >{{y}}</a>
+        </td>
+        <td>
+            {{y.description | linebreaks}}
+        </td>
+        <td><a href='{% url 'delete' y.id %}' class='btn btn-outline-secondary btn-sm'>Delete</a></td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+<br>
+{% endfor %}
+<br><br>
+
+
+{% endblock %}

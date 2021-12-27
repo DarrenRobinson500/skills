@@ -1,13 +1,81 @@
 from django.shortcuts import render, redirect
 from django.db.models import Avg
-from .models import People, Skill_Cat, Skill_Level, Skill, Score, File, Target, Colour, Role_Level
-from .forms import FileForm, SkillForm, PeopleForm
+from .models import *
+from .forms import *
 from .filters import *
 import openpyxl as xl
 
 def notes_list(request):
-    return render(request, 'notes_list.html', {})
+    items = Note.objects.filter(level=1)
+    return render(request, 'notes_list.html', {'items': items})
 
+def calendar(request):
+    items = Note.objects.exclude(date__isnull=True).exclude(type="Meeting").exclude(type="Person").exclude(status="Complete").order_by('date')
+
+    return render(request, 'calendar.html', {'items': items})
+
+def get_form(request, type, item):
+    if type is None: type = "Note"
+
+    if type == "Note": form = BaseForm(request.POST or None, instance=item)
+    if type == "Person": form = PersonForm(request.POST or None, instance=item)
+    if type == "Objective": form = ObjectiveForm(request.POST or None, instance=item)
+    if type == "Story": form = StoryForm(request.POST or None, instance=item)
+    if type == "Issue": form = IssueForm(request.POST or None, instance=item)
+    if type == "ToDo": form = ToDoForm(request.POST or None, instance=item)
+    if type == "Group": form = GroupForm(request.POST or None, instance=item)
+    if type == "Reminder": form = ReminderForm(request.POST or None, instance=item)
+    if type == "Meeting": form = MeetingForm(request.POST or None, instance=item)
+
+    return form
+
+def new(request, type=None, parent_id=None, return_page=None):
+    if type is None: type = "Note"
+    form = get_form(request, type, None)
+    if form.is_valid():
+        new = form.save()
+        if type is not None: new.type = type
+        if parent_id is not None:
+            parent = Note.objects.get(id=parent_id)
+            new.parent = parent
+            new.level = parent.level + 1
+        else:
+            new.level = 1
+        new.save()
+        if return_page is None: return redirect("notes_list")
+        return redirect("/ind/" + str(return_page))
+    return render(request, "new.html", {"type": type, "form": form})
+
+def delete(request,id):
+    item = Note.objects.get(id=id)
+    parent = item.parent
+    item.delete()
+    if parent is None: return(redirect("notes_list"))
+    return redirect("/ind/" + str(parent.id))
+
+def get_types(type):
+    types = None
+    if type == "Person":
+        # type, Table Heading
+        types = [("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
+                 ("ToDo", "ToDo"), ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
+    if type == "Group":
+        # type, Table Heading
+        types = [("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
+                 ("ToDo", "ToDo"), ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
+    if type == "Objective":
+        # type, Table Heading
+        types = [("ToDo", "ToDo"), ("Reminder", "Reminders"),]
+    return types
+
+def ind(request, id):
+    item = Note.objects.get(id=id)
+    form = get_form(request, item.type, item)
+    types = get_types(item.type)
+    if form.is_valid():
+        form.save()
+
+    return render(request, "ind.html", {"item": item, "types": types, "form": form})
 
 def people_list(request):
     if Colour.objects.filter(active=True).count() > 0:

@@ -8,6 +8,14 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.notes_list, name='notes_list'),
+    path('calendar', views.calendar, name='calendar'),
+    path('new', views.new, name='new'),
+    path('new/<type>', views.new, name='new'),
+    path('new/<type>/<parent_id>', views.new, name='new'),
+    path('new/<type>/<parent_id>/<return_page>', views.new, name='new'),
+    path('ind/<id>', views.ind, name='ind'),
+    path('delete/<id>', views.delete, name='delete'),
+
     # path('', views.people_list, name='people_list'),
 
     path('people_list', views.people_list, name='people_list'),

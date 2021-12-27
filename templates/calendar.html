@@ -1,0 +1,16 @@
+{% extends 'base.html'%}
+{% block content %}
+
+<h1>Calendar</h1>
+<table class='table table-striped table-hover table-bordered'>
+    <tr><th>Date</th><th>Path</th><th>Item</th></tr>
+    {% for x in items %}
+    <tr>
+        <td>{{x.date|date:"d M Y"}}</td>
+        <td>{{x.full_name}}</td>
+        <td><a href='{% url 'ind' x.id %}' >{{x.type}}: {{x}}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+<br><br>
+{% endblock %}

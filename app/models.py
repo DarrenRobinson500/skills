@@ -115,3 +115,38 @@ class File(models.Model):
     def delete(self, *args, **kwargs):
         self.document.delete()
         super().delete(*args, **kwargs)
+
+TYPES = [("Person","Person"), ("Objective","Objective"), ("Story","Story"), ("Issue","Issue"), ("To Do","To Do"), ("Group","Group"), ("Reminder","Reminder"), ("Meeting","Meeting"), ]
+STATUS = [("Open","Open"), ("Complete","Complete"),  ]
+
+class Note(models.Model):
+    name = models.CharField(max_length=255,null=True)
+    description = models.TextField(null=True, blank=True)
+    actions = models.TextField(null=True, blank=True)
+    comment = models.TextField(null=True, blank=True)
+    type = models.CharField(max_length=64,null=True,choices=TYPES)
+    parent = models.ForeignKey("self", related_name='parent_rn', blank=True, null=True, on_delete=models.SET_NULL,)
+    level = models.IntegerField(null=True)
+    date = models.DateField(null=True, blank=True)
+    status = models.TextField(null=True, blank=True, choices=STATUS)
+
+    created_by = models.CharField(max_length=255, null=True, blank=True)
+    time_stamp = models.DateTimeField(auto_now_add=True, null=True)
+
+
+    def __str__(self):
+        if self.date is not None and self.type != "Person": return self.name + " (" + self.date.strftime('%d %b %Y') + ")"
+        return self.name
+
+    def children(self):
+        children = Note.objects.filter(parent=self).order_by('-time_stamp')
+        return children
+
+    def full_name(self):
+        parent = self.parent
+        name = self.name
+        while parent is not None:
+            name = parent.name + "/" + name
+            parent = parent.parent
+
+        return name
