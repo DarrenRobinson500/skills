@@ -8,7 +8,7 @@ from .permissions import user_required
 
 @user_required
 def notes_list(request):
-    items = Note.objects.filter(level=1)
+    items = Note.objects.filter(parent__isnull=True)
     return render(request, 'notes_list.html', {'items': items})
 
 @user_required

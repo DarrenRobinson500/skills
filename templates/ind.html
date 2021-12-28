@@ -5,7 +5,7 @@
     <div class="col-sm-5">
         <h1>{{item}} {{item.type_x}}
         {% if item.parent is None %}
-            <a href='{% url 'notes_list' %}' class='btn btn-outline-secondary btn-sm'>Back to List</a>
+            <a href='{% url 'notes_list' %}' class='btn btn-outline-secondary btn-sm'>Home Page</a>
         {% else %}
             <a href='{% url 'ind' item.parent.id %}' class='btn btn-outline-secondary btn-sm'>Back to {{ item.parent }}</a>
         {% endif %}
