@@ -4,11 +4,14 @@ from .models import *
 from .forms import *
 from .filters import *
 import openpyxl as xl
+from .permissions import user_required
 
+@user_required
 def notes_list(request):
     items = Note.objects.filter(level=1)
     return render(request, 'notes_list.html', {'items': items})
 
+@user_required
 def calendar(request):
     items = Note.objects.exclude(date__isnull=True).exclude(type="Meeting").exclude(type="Person").exclude(status="Complete").order_by('date')
     bdays = Note.objects.filter(type="Person").exclude(date__isnull=True)
@@ -32,6 +35,7 @@ def get_form(request, type, item):
 
     return form
 
+@user_required
 def new(request, type=None, parent_id=None, return_page=None):
     if type is None: type = "Note"
     form = get_form(request, type, None)
@@ -50,6 +54,7 @@ def new(request, type=None, parent_id=None, return_page=None):
         return redirect("/ind/" + str(return_page))
     return render(request, "new.html", {"type": type, "heading": heading, "form": form})
 
+@user_required
 def delete(request,id):
     item = Note.objects.get(id=id)
     parent = item.parent
@@ -57,13 +62,12 @@ def delete(request,id):
     if parent is None: return(redirect("notes_list"))
     return redirect("/ind/" + str(parent.id))
 
+@user_required
 def complete(request,id):
     item = Note.objects.get(id=id)
     item.status = "Complete"
     item.save()
     return redirect("calendar")
-
-
 
 def get_types(type):
     types = None
@@ -78,6 +82,7 @@ def get_types(type):
         types = [("ToDo", "ToDo"), ("Objective", "Objectives"), ("Issue", "Issues"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
     return types
 
+@user_required
 def ind(request, id):
     item = Note.objects.get(id=id)
     form = get_form(request, item.type, item)
@@ -87,6 +92,7 @@ def ind(request, id):
 
     return render(request, "ind.html", {"item": item, "types": types, "form": form})
 
+@user_required
 def parent(request, id):
     item = Note.objects.get(id=id)
     form = ParentForm(request.POST or None, instance=item)
@@ -99,7 +105,7 @@ def parent(request, id):
     return render(request, "new.html", {"item": item, "heading": heading, "form": form})
 
 
-
+@user_required
 def people_list(request):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -113,6 +119,7 @@ def people_list(request):
     filter = None
     return render(request, 'people_list.html', {'list': list, 'filter':filter, 'colour':colour})
 
+@user_required
 def people_team(request, id):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -173,6 +180,7 @@ def people_team(request, id):
 
 
 
+@user_required
 def people_ind(request, id):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -231,6 +239,7 @@ def people_ind(request, id):
     return render(request, 'people_ind.html', {'list': list,'sub_categories':sub_categories,'person':person,'scores':scores,'colour':colour})
 
 
+@user_required
 def people_skill_update(request, people_id, sub_category_id):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -270,6 +279,7 @@ def people_skill_update(request, people_id, sub_category_id):
     return render(request, 'people_skill_update.html', {'list': list,'person':person,'sub_category': sub_category,
                                                         'levels':levels, 'buttons':buttons,'colour':colour})
 
+@user_required
 def people_target_update(request,people_id,sub_category_id,level_id):
     sub_category = Skill_Cat.objects.filter(id=sub_category_id)[0]
     person = People.objects.get(id=people_id)
@@ -284,6 +294,7 @@ def people_target_update(request,people_id,sub_category_id,level_id):
         target_obj.save()
     return redirect('/people_ind/' + people_id)
 
+@user_required
 def people_update(request, id):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -299,16 +310,19 @@ def people_update(request, id):
         return redirect('people_list')
     return render(request, 'update.html', {'item': item, 'form': form,'colour':colour})
 
+@user_required
 def people_delete(request, id):
     item = People.objects.get(pk=id)
     item.delete()
     return redirect('people_list')
 
+@user_required
 def people_delete_all(request):
     item = People.objects.all()
     item.delete()
     return redirect('people_list')
 
+@user_required
 def people_upload(request, id):
     file = File.objects.filter(id=id)[0]
     path = str(file.document.url)[1:]
@@ -332,6 +346,7 @@ def people_upload(request, id):
             People(name=name, manager=parent_object, role=role).save()
     return redirect('people_list')
 
+@user_required
 def skill_list(request):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -345,6 +360,7 @@ def skill_list(request):
     levels = Skill_Level.objects.all()
     return render(request, 'skill_list.html', {'list': list,'rows':rows,'levels':levels,'colour':colour})
 
+@user_required
 def level_list(request):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -357,6 +373,7 @@ def level_list(request):
     list2 = Role_Level.objects.all()
     return render(request, 'level_list.html', {'list': list,'list2': list2,'colour':colour})
 
+@user_required
 def skill_ind(request, sub_category_id, level_id):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -372,6 +389,7 @@ def skill_ind(request, sub_category_id, level_id):
         return redirect('skill_list')
     return render(request, 'skill_ind.html', {'list': list,'sub_category': sub_category,'buttons':buttons,'colour':colour})
 
+@user_required
 def skill_update(request, id):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -387,11 +405,13 @@ def skill_update(request, id):
         return redirect('skill_list')
     return render(request, 'update.html', {'item': item, 'form': form,'colour':colour})
 
+@user_required
 def skill_delete(request, id):
     item = Skill.objects.get(pk=id)
     item.delete()
     return redirect('skill_list')
 
+@user_required
 def skill_delete_all(request):
     item = Skill.objects.all()
     item.delete()
@@ -401,6 +421,7 @@ def skill_delete_all(request):
     item.delete()
     return redirect('skill_list')
 
+@user_required
 def skill_cat_upload(request, id):
     file = File.objects.filter(id=id)[0]
     path = str(file.document.url)[1:]
@@ -419,6 +440,7 @@ def skill_cat_upload(request, id):
             Skill_Cat(category=category, sub_category=sub_category).save()
     return redirect('skill_list')
 
+@user_required
 def level_upload(request, id):
     file = File.objects.filter(id=id)[0]
     path = str(file.document.url)[1:]
@@ -440,6 +462,7 @@ def level_upload(request, id):
             level_obj.save()
     return redirect('level_list')
 
+@user_required
 def role_upload(request, id):
     file = File.objects.filter(id=id)[0]
     path = str(file.document.url)[1:]
@@ -461,15 +484,18 @@ def role_upload(request, id):
             role_obj.save()
     return redirect('level_list')
 
+@user_required
 def level_delete_all(request):
     item = Skill_Level.objects.all()
     item.delete()
     return redirect('level_list')
 
+@user_required
 def role_delete_all(request):
     Role_Level.objects.all().delete()
     return redirect('level_list')
 
+@user_required
 def skill_upload(request, id):
     file = File.objects.filter(id=id)[0]
     path = str(file.document.url)[1:]
@@ -498,6 +524,7 @@ def skill_upload(request, id):
             print(f"{sub_category} not found")
     return redirect('skill_list')
 
+@user_required
 def colour_list(request):
     list = Colour.objects.all()
     if Colour.objects.filter(active=True).count() > 0:
@@ -508,6 +535,7 @@ def colour_list(request):
         colour = Colour().save()
     return render(request, 'colour_list.html', {'list': list,'colour':colour})
 
+@user_required
 def colour_activate(request, id):
     active = Colour.objects.filter(active=True)
     for item in active:
@@ -518,11 +546,13 @@ def colour_activate(request, id):
     new_active.save()
     return redirect('colour_list')
 
+@user_required
 def colour_delete_all(request):
     item = Colour.objects.all()
     item.delete()
     return redirect('colour_list')
 
+@user_required
 def colour_upload(request, id):
     file = File.objects.filter(id=id)[0]
     path = str(file.document.url)[1:]
@@ -547,6 +577,7 @@ def colour_upload(request, id):
                    secondary_dark=secondary_dark, secondary_light=secondary_light).save()
     return redirect('colour_list')
 
+@user_required
 def file_list(request):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -558,6 +589,7 @@ def file_list(request):
     list = File.objects.all().order_by('name')
     return render(request, 'file_list.html', {'list': list,'colour':colour})
 
+@user_required
 def file_upload(request):
     if Colour.objects.filter(active=True).count() > 0:
         colour = Colour.objects.filter(active=True)[0]
@@ -575,6 +607,7 @@ def file_upload(request):
         form = FileForm()
     return render(request, 'file_upload.html',{'form':form,'colour':colour})
 
+@user_required
 def file_delete(request, file_id):
     if request.method == 'POST':
         file = File.objects.get(pk=file_id)
