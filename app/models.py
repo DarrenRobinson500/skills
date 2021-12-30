@@ -119,9 +119,9 @@ class File(models.Model):
         self.document.delete()
         super().delete(*args, **kwargs)
 
-TYPES = [("Person","Person"), ("Objective","Objective"), ("Story","Story"), ("Issue","Issue"), ("To Do","To Do"), ("Group","Group"), ("Reminder","Reminder"), ("Meeting","Meeting"), ]
-TYPES_ORDER = {"Person":1, "Objective":2, "Story":3, "Issue":4, "ToDo":5, "Group":0, "Reminder":6, "Meeting":7, }
-STATUS = [("Open","Open"), ("Complete","Complete"),  ]
+TYPES = [("Group","Group"), ("Person","Person"), ("Objective","Objective"), ("Story","Story"), ("Issue","Issue"), ("ToDo","ToDo"), ("Report","Report"), ("Reminder","Reminder"), ("Meeting","Meeting"), ("Holiday", "Holiday"), ("Medical", "Medical"),]
+TYPES_ORDER = {"Group":0, "Person":1, "Objective":2, "Issue":3, "ToDo":4, "Report":6, "Reminder":5, "Meeting":7, "Story":8, "Holiday":9, "Medical":10, }
+STATUS = [("Requested","Requested"), ("Open","Open"), ("Complete","Complete"), ]
 
 class Note(models.Model):
     name = models.CharField(max_length=255,null=True)

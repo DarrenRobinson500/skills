@@ -14,7 +14,7 @@
         {{ item.next_birthday |date:"j M Y"}}
         {% endif %}
 
-        <p>{{item.description|linebreaksbr}}</p>
+        <p>{{item.description|safe|linebreaksbr}}</p>
             <form action='' method=POST>
                 {% csrf_token %}
                 <table class="table table-striped table-hover table-bordered">

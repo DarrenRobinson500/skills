@@ -74,7 +74,7 @@ def get_types(type):
     if type == "Person":
         # type, Table Heading
         types = [("ToDo", "ToDo"), ("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
-                 ("ToDo", "ToDo"), ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
+                 ("Reports", "Reports"), ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ("Holiday", "Holiday"), ("Medical", "Medical"),]
     if type == "Group":
         types = [("ToDo", "ToDo"), ("Person", "Related People"), ("Objective", "Objectives"), ("Story", "Stories"), ("Issue", "Issues"),
                  ("Group", "Groups"), ("Reminder", "Reminders"), ("Meeting", "Meetings"), ]
