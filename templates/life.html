@@ -1,0 +1,48 @@
+{% extends 'base.html'%}
+{% block content %}
+{% load static %}
+{% load tags %}
+
+<h1>Life</h1>
+<div class="row">
+    <div class="col-sm-6">
+        <div class='card-header' style="color: white; background-color: #{% colour_nav request %};">
+            <b>Gratefulness</b>
+        </div>
+        <div class='card-body'>
+            <a href='{% url 'new' 'Grateful' %}' class='btn btn-outline-secondary btn-sm'>New</a>
+            <table class="table">
+                {% for x in grateful %}
+                <tr>
+                    <td>{{x.time_stamp|date:"j M y"}}</td>
+                    <td>{{x.name}}</td>
+                    <td>
+                        {{x.description|safe}}<br>
+                        <a href='{% url 'edit' x.id %}'>Edit</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class='card-header' style="color: white; background-color: #{% colour_nav request %};">
+            <b>Life</b>
+        </div>
+        <div class='card-body'>
+            <a href='{% url 'new' 'Life' %}' class='btn btn-outline-secondary btn-sm'>New</a>
+            <table class="table">
+                {% for x in life %}
+                <tr>
+                    <td>
+                        {{x.description|safe|linebreaksbr}}
+                        <a href='{% url 'edit' x.id %}'>Edit</a>
+                    </td></tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

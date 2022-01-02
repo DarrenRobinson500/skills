@@ -7,8 +7,14 @@ import openpyxl as xl
 from .permissions import user_required
 
 @user_required
+def life(request):
+    grateful = Note.objects.filter(type="Grateful").order_by('-time_stamp')
+    life = Note.objects.filter(type="Life")
+    return render(request, 'life.html', {'grateful': grateful,'life': life,})
+
+@user_required
 def notes_list(request):
-    items = Note.objects.filter(parent__isnull=True)
+    items = Note.objects.filter(parent__isnull=True).exclude(type="Grateful").exclude(type="Life")
     return render(request, 'notes_list.html', {'items': items})
 
 @user_required
@@ -22,7 +28,6 @@ def calendar(request):
 
 def get_form(request, type, item):
     if type is None: type = "Note"
-
     if type == "Note": form = BaseForm(request.POST or None, instance=item)
     if type == "Person": form = PersonForm(request.POST or None, instance=item)
     if type == "Objective": form = ObjectiveForm(request.POST or None, instance=item)
@@ -32,6 +37,8 @@ def get_form(request, type, item):
     if type == "Group": form = GroupForm(request.POST or None, instance=item)
     if type == "Reminder": form = ReminderForm(request.POST or None, instance=item)
     if type == "Meeting": form = MeetingForm(request.POST or None, instance=item)
+    if type == "Grateful": form = GratefulForm(request.POST or None, instance=item)
+    if type == "Life": form = LifeForm(request.POST or None, instance=item)
 
     return form
 
@@ -50,6 +57,7 @@ def new(request, type=None, parent_id=None, return_page=None):
         else:
             new.level = 1
         new.save()
+        if type == "Grateful" or type == "Life": return redirect("life")
         if return_page is None: return redirect("notes_list")
         return redirect("/ind/" + str(return_page))
     return render(request, "new.html", {"type": type, "heading": heading, "form": form})
@@ -91,6 +99,18 @@ def ind(request, id):
         form.save()
 
     return render(request, "ind.html", {"item": item, "types": types, "form": form})
+
+@user_required
+def edit(request, id):
+    item = Note.objects.get(id=id)
+    form = get_form(request, item.type, item)
+    if form.is_valid():
+        form.save()
+        return redirect("life")
+
+    return render(request, "new.html", {"item": item, "form": form})
+
+
 
 @user_required
 def parent(request, id):

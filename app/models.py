@@ -119,7 +119,7 @@ class File(models.Model):
         self.document.delete()
         super().delete(*args, **kwargs)
 
-TYPES = [("Group","Group"), ("Person","Person"), ("Objective","Objective"), ("Story","Story"), ("Issue","Issue"), ("ToDo","ToDo"), ("Report","Report"), ("Reminder","Reminder"), ("Meeting","Meeting"), ("Holiday", "Holiday"), ("Medical", "Medical"),]
+TYPES = [("Group","Group"), ("Person","Person"), ("Objective","Objective"), ("Story","Story"), ("Issue","Issue"), ("ToDo","ToDo"), ("Report","Report"), ("Reminder","Reminder"), ("Meeting","Meeting"), ("Holiday", "Holiday"), ("Medical", "Medical"),("Grateful","Grateful"),("Life","Life"),]
 TYPES_ORDER = {"Group":0, "Person":1, "Objective":2, "Issue":3, "ToDo":4, "Report":6, "Reminder":5, "Meeting":7, "Story":8, "Holiday":9, "Medical":10, }
 STATUS = [("Requested","Requested"), ("Open","Open"), ("Complete","Complete"), ]
 
@@ -140,6 +140,7 @@ class Note(models.Model):
 
     def __str__(self):
         if self.date is not None and self.type != "Person": return self.name + " (" + self.date.strftime('%d %b %Y') + ")"
+        if self.name is None: return self.description
         return self.name
 
     def children(self):

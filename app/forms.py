@@ -86,7 +86,6 @@ class MeetingForm(ModelForm):
         labels = {'description': 'Notes',}
         widgets = WIDGETS
 
-
 class SkillForm(ModelForm):
     class Meta:
         model = Skill
@@ -96,6 +95,21 @@ class SkillForm(ModelForm):
             'level': forms.TextInput(attrs={'class': 'form-control'}),
             'question': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+class GratefulForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('name','description',)
+        widgets = WIDGETS
+
+class LifeForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('description',)
+        widgets = WIDGETS
+
+
+
 
 class PeopleForm(ModelForm):
     class Meta:
