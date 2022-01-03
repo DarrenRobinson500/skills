@@ -1,20 +1,50 @@
 {% extends 'base.html'%}
 {% block content %}
+{% load tags %}
 
-<h1>Notes</h1>
-<a href='{% url 'new' %}' class='btn btn-outline-secondary btn-sm'>New</a>
-<table class='table table-striped table-hover table-bordered'>
-    <tr><th>Item</th><th>Description</th><th>Action</th></tr>
-    {% for x in items %}
-    <tr>
-        <td>
-            <a href='{% url 'ind' x.id %}' >{{x}}</a>
-        </td>
-        <td>
-            {{x.description}}
-        </td>
-        <td></td>
-    </tr>
-    {% endfor %}
+
+<h1>Menu</h1>
+<a href='{% url 'new' %}' class='btn btn-outline-secondary btn-sm'>New Category</a><br><br>
+{% for item in items %}
+
+    {% if forloop.counter0|divisibleby:4 %}
+        <div class="row">
+    {% endif %}
+            <div class="col-sm-3">
+                <div class='card-header' style="color: white; background-color: #{% colour_nav request %};">
+                    <b>{{item.name}}</b>
+                </div>
+                <div class='card-body'>
+                    {% if item.has_children %}
+                        <ul>
+                        {% for a in item.children %}
+                        <li><a href='{% url 'ind' a.id %}' >{{a}}</a> {{a.type_x}}</li>
+                            {% if a.has_children %}
+                                <ul>
+                                    {% for b in a.children %}
+                                    <li><a href='{% url 'ind' b.id %}' >{{b}}</a> {{b.type_x}}</li>
+                                    {% if b.has_children %}
+                                        <ul>
+                                            {% for c in b.children %}
+                                            <li><a href='{% url 'ind' c.id %}' >{{c}}</a> {{c.type_x}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+
+
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+    {% if forloop.counter|divisibleby:4 %}
+        </div>
+    {% endif %}
+{% endfor %}
+
+
 <br><br>
 {% endblock %}

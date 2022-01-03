@@ -108,6 +108,11 @@ class LifeForm(ModelForm):
         fields = ('description',)
         widgets = WIDGETS
 
+class MedicalForm(ModelForm):
+    class Meta:
+        model = Note
+        fields = ('name','description',)
+        widgets = WIDGETS
 
 
 

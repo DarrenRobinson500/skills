@@ -39,6 +39,7 @@ def get_form(request, type, item):
     if type == "Meeting": form = MeetingForm(request.POST or None, instance=item)
     if type == "Grateful": form = GratefulForm(request.POST or None, instance=item)
     if type == "Life": form = LifeForm(request.POST or None, instance=item)
+    if type == "Medical": form = MedicalForm(request.POST or None, instance=item)
 
     return form
 
@@ -71,11 +72,14 @@ def delete(request,id):
     return redirect("/ind/" + str(parent.id))
 
 @user_required
-def complete(request,id):
+def complete(request,id, return_page):
     item = Note.objects.get(id=id)
-    item.status = "Complete"
+    if item.status == "Complete": item.status = "Open"
+    else: item.status = "Complete"
     item.save()
-    return redirect("calendar")
+    if return_page == "ind": return_page += "/" + str(item.parent.id)
+    return_page = "/" + return_page
+    return redirect(return_page)
 
 def get_types(type):
     types = None

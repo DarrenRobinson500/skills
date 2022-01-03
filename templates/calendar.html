@@ -13,7 +13,7 @@
             <td></td>
         {% else %}
             <td><a href='{% url 'ind' x.id %}' >{{x.type}}: {{x}}</a></td>
-            <td><a href='{% url 'complete' x.id %}' class='btn btn-outline-secondary btn-sm'>Mark as Complete</a></td>
+            <td><a href='{% url 'complete' x.id 'calendar' %}' class='btn btn-outline-secondary btn-sm'>Mark as Complete</a></td>
         {% endif %}
     </tr>
     {% endfor %}

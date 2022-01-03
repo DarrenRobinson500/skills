@@ -11,3 +11,5 @@ except:
 # git commit -m “Heroku Push”
 # git push
 # git push heroku main
+
+# heroku run python manage.py createsuperuser

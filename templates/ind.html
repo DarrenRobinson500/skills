@@ -76,17 +76,20 @@
     <tr><th>Item</th><th>Description</th><th>Action</th></tr>
     {% for y in item.children %}
     {% if y.type == x %}
-    {% if y.status == "complete" %} <del> {% endif %}
     <tr>
         <td>
+            {% if y.status == "Complete" %} <del> {% endif %}
             <a href='{% url 'ind' y.id %}' >{{y}}</a>
+            {% if y.status == "complete" %} </del> {% endif %}
         </td>
         <td>
-            {{y.description | linebreaks}}
+            {{y.description | safe | linebreaks}}
         </td>
-        <td><a href='{% url 'delete' y.id %}' class='btn btn-outline-secondary btn-sm'>Delete</a></td>
+        <td>
+            <a href='{% url 'complete' y.id 'ind' %}' class='btn btn-outline-secondary btn-sm'>Complete</a>
+            <a href='{% url 'delete' y.id %}' class='btn btn-outline-secondary btn-sm'>Delete</a>
+        </td>
     </tr>
-    {% if y.status == "complete" %} </del> {% endif %}
     {% endif %}
     {% endfor %}
 </table>

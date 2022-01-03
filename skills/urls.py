@@ -18,7 +18,7 @@ urlpatterns = [
     path('edit/<id>', views.edit, name='edit'),
     path('parent/<id>', views.parent, name='parent'),
     path('delete/<id>', views.delete, name='delete'),
-    path('complete/<id>', views.complete, name='complete'),
+    path('complete/<id>/<return_page>', views.complete, name='complete'),
 
     # path('', views.people_list, name='people_list'),
 
