@@ -121,7 +121,7 @@ class File(models.Model):
 
 TYPES = [("Group","Group"), ("Person","Person"), ("Objective","Objective"), ("Story","Story"), ("Issue","Issue"), ("ToDo","ToDo"), ("Report","Report"), ("Reminder","Reminder"), ("Meeting","Meeting"), ("Holiday", "Holiday"), ("Medical", "Medical"),("Grateful","Grateful"),("Life","Life"),]
 TYPES_ORDER = {"Group":0, "Person":1, "Objective":2, "Issue":3, "ToDo":4, "Report":6, "Reminder":5, "Meeting":7, "Story":8, "Holiday":9, "Medical":10, }
-STATUS = [("Requested","Requested"), ("Open","Open"), ("Complete","Complete"), ]
+STATUS = [("Not asked","Not asked"), ("Requested and Open","Requested and Open"), ("Complete","Complete"), ]
 
 class Note(models.Model):
     name = models.CharField(max_length=255,null=True)
@@ -132,7 +132,7 @@ class Note(models.Model):
     parent = models.ForeignKey("self", related_name='parent_rn', blank=True, null=True, on_delete=models.SET_NULL,)
     level = models.IntegerField(null=True)
     date = models.DateField(null=True, blank=True)
-    status = models.TextField(null=True, blank=True, choices=STATUS)
+    status = models.TextField(null=True, blank=True, default="Not asked", choices=STATUS)
 
     created_by = models.CharField(max_length=255, null=True, blank=True)
     time_stamp = models.DateTimeField(auto_now_add=True, null=True)

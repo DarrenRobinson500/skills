@@ -12,7 +12,7 @@
     {% endif %}
             <div class="col-sm-3">
                 <div class='card-header' style="color: white; background-color: #{% colour_nav request %};">
-                    <b>{{item.name}}</b>
+                    <b><a href='{% url 'ind' item.id %}' style="color: white;">{{item}}</a></b>
                 </div>
                 <div class='card-body'>
                     {% if item.has_children %}

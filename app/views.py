@@ -43,6 +43,56 @@ def get_form(request, type, item):
 
     return form
 
+def add_html(text):
+    new_text = ""
+    done_something = False
+    mode = 1
+    for x in text:
+        # print()
+        # print(repr(x), "Mode:", mode)
+        if mode == 1:
+            new_text += x
+            if x == "\r":
+                mode = 2
+        elif mode == 2:
+            if x == " ":
+                mode = 3
+            elif x != "\n" and x != "\r":
+                new_text += x
+                mode = 1
+        elif mode == 3:
+            if x == "-":
+                new_text = new_text[:-1] + "<ul><li>"
+                done_something = True
+                mode = 4
+            else:
+                new_text += " " + x
+                mode = 1
+        elif mode == 4:
+            if x == "\r":
+                new_text += "</li>"
+                mode = 5
+            else:
+                new_text += x
+        elif mode == 5:
+            if x == " ":
+                mode = 6
+            elif x != "\n" and x != "\r":
+                new_text += "</ul> " + x
+                mode = 1
+        elif mode == 6:
+            if x == "-":
+                new_text += "<li>"
+                mode = 4
+            else:
+                new_text += "</ul> " + x
+                mode = 1
+    if mode == 4:
+        new_text += "</li></ul>"
+    if done_something:
+        new_text = "<ul></ul>" + new_text
+    return new_text
+
 @user_required
 def new(request, type=None, parent_id=None, return_page=None):
     if type is None: type = "Note"
@@ -50,6 +100,9 @@ def new(request, type=None, parent_id=None, return_page=None):
     heading = "New "
     if form.is_valid():
         new = form.save()
+        new.description = add_html(new.description)
+        print(new.description)
+        new.save()
         if type is not None: new.type = type
         if parent_id is not None:
             parent = Note.objects.get(id=parent_id)
@@ -100,7 +153,10 @@ def ind(request, id):
     form = get_form(request, item.type, item)
     types = get_types(item.type)
     if form.is_valid():
-        form.save()
+        new = form.save()
+        new.description = add_html(new.description)
+        new.save()
+        form = get_form(request, item.type, item)
 
     return render(request, "ind.html", {"item": item, "types": types, "form": form})
 
@@ -110,6 +166,7 @@ def edit(request, id):
     form = get_form(request, item.type, item)
     if form.is_valid():
         form.save()
+
         return redirect("life")
 
     return render(request, "new.html", {"item": item, "form": form})
