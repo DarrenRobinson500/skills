@@ -141,12 +141,13 @@ class Note(models.Model):
 
     def __str__(self):
         if self.date is not None and self.type != "Person":
-            return self.name + " (" + self.date.strftime('%d %b %Y') + ")" + " [" + str(self.time_changed) + "]"
-        if self.name is None:
-            return self.description + " [" + str(self.time_changed) + "]"
-
-        result = self.name
-        result += " [" + str(self.time_changed) + "]"
+            result = self.name + " (" + self.date.strftime('%d %b %Y') + ")"
+        elif self.name is None:
+            return self.description
+        else:
+            result = self.name
+        if self.time_changed is not None:
+            result += " [" + str(self.time_changed.strftime('%d %b %Y')) + "]"
         return result
 
     def children(self):
