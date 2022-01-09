@@ -151,6 +151,7 @@ class Note(models.Model):
 
     def type_x(self):
         if self.type == "Person": return ""
+        if self.type is None: return ""
         return "[" + self.type + "]"
 
     def type_order(self):
