@@ -135,6 +135,7 @@ class Note(models.Model):
     status = models.TextField(null=True, blank=True, default="Not asked", choices=STATUS)
 
     created_by = models.CharField(max_length=255, null=True, blank=True)
+    time_changed = models.DateTimeField(null=True, blank=True)
     time_stamp = models.DateTimeField(auto_now_add=True, null=True)
 
 
@@ -144,7 +145,7 @@ class Note(models.Model):
         return self.name
 
     def children(self):
-        children = Note.objects.filter(parent=self).order_by('-time_stamp')
+        children = Note.objects.filter(parent=self).order_by('-time_changed')
         children = sorted(children, key=lambda t: t.type_order())
         return children
 

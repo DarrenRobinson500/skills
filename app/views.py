@@ -44,12 +44,11 @@ def get_form(request, type, item):
     return form
 
 def add_html(text):
+    if text is None: return
     new_text = ""
     done_something = False
     mode = 1
     for x in text:
-        # print()
-        # print(repr(x), "Mode:", mode)
         if mode == 1:
             new_text += x
             if x == "\r":
@@ -93,6 +92,16 @@ def add_html(text):
         new_text = "<ul></ul>" + new_text
     return new_text
 
+def update_timestamp(item):
+    item.time_changed = datetime.now()
+    item.save()
+    print(item, item.time_changed)
+    print("Parent", item.parent)
+    if item.parent is not None:
+
+        update_timestamp(item.parent)
+    return
+
 @user_required
 def new(request, type=None, parent_id=None, return_page=None):
     if type is None: type = "Note"
@@ -101,7 +110,6 @@ def new(request, type=None, parent_id=None, return_page=None):
     if form.is_valid():
         new = form.save()
         new.description = add_html(new.description)
-        print(new.description)
         new.save()
         if type is not None: new.type = type
         if parent_id is not None:
@@ -111,6 +119,7 @@ def new(request, type=None, parent_id=None, return_page=None):
         else:
             new.level = 1
         new.save()
+        update_timestamp(new)
         if type == "Grateful" or type == "Life": return redirect("life")
         if return_page is None: return redirect("notes_list")
         return redirect("/ind/" + str(return_page))
@@ -155,6 +164,7 @@ def ind(request, id):
     if form.is_valid():
         new = form.save()
         new.description = add_html(new.description)
+        update_timestamp(new)
         new.save()
         form = get_form(request, item.type, item)
 
@@ -253,9 +263,6 @@ def people_team(request, id):
             if score == 5: skill.text5_temp += member.name + chr(13)
             skill.save()
 
-    for skill in skills:
-        print(skill.question)
-
 
     return render(request, "people_team.html", {'person':person, 'team':team, 'skills': skills, 'levels':levels, 'colour':colour})
 
@@ -281,7 +288,6 @@ def people_ind(request, id):
         for skill in skills:
             if Score.objects.filter(person=person, skill=skill).count() > 0:
                 result = Score.objects.filter(person=person, skill=skill)[0].score
-                print(skill.id,skill.question,person.level(),skill.level(),result)
                 if person.level() == skill.level() and result < 3:
                     sub_category.to_develop += skill.question + chr(13)
                 if person.level() == skill.level() + 1 and result < 4:
@@ -345,7 +351,6 @@ def people_skill_update(request, people_id, sub_category_id):
     if request.method == 'POST':
         for item in list:
             try:
-                print(request.POST)
                 score = request.POST.__getitem__(str(item.id))
                 existing_query = Score.objects.filter(skill=item,person=person)
                 if existing_query.count() == 0:
@@ -599,10 +604,6 @@ def skill_upload(request, id):
                 role_level_obj = Role_Level.objects.all().filter(role_level=role_level)[0]
                 if Skill.objects.all().filter(sub_category=sub_category_obj,question=question).count() == 0:
                     Skill(sub_category=sub_category_obj, question=question, role_level=role_level_obj).save()
-            else:
-                print(f"{role_level} not found")
-        else:
-            print(f"{sub_category} not found")
     return redirect('skill_list')
 
 @user_required

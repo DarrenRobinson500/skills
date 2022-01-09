@@ -18,22 +18,26 @@
                     {% if item.has_children %}
                         <ul>
                         {% for a in item.children %}
-                        <li><a href='{% url 'ind' a.id %}' >{{a}}</a> {{a.type_x}}</li>
-                            {% if a.has_children %}
-                                <ul>
-                                    {% for b in a.children %}
-                                    <li><a href='{% url 'ind' b.id %}' >{{b}}</a> {{b.type_x}}</li>
-                                    {% if b.has_children %}
-                                        <ul>
-                                            {% for c in b.children %}
-                                            <li><a href='{% url 'ind' c.id %}' >{{c}}</a> {{c.type_x}}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    {% endif %}
-
-
-                                    {% endfor %}
-                                </ul>
+                            {% if a.status != "Complete" %}
+                                <li><a href='{% url 'ind' a.id %}' >{{a}}</a> {{a.type_x}}</li>
+                                {% if a.has_children %}
+                                    <ul>
+                                        {% for b in a.children %}
+                                        {% if b.status != "Complete" %}
+                                        <li><a href='{% url 'ind' b.id %}' >{{b}}</a> {{b.type_x}}</li>
+                                            {% if b.has_children %}
+                                                <ul>
+                                                    {% for c in b.children %}
+                                                    {% if c.status != "Complete" %}
+                                                        <li><a href='{% url 'ind' c.id %}' >{{c}}</a> {{c.type_x}}</li>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
                             {% endif %}
                         {% endfor %}
                         </ul>
