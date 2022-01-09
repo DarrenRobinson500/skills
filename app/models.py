@@ -140,9 +140,14 @@ class Note(models.Model):
 
 
     def __str__(self):
-        if self.date is not None and self.type != "Person": return self.name + " (" + self.date.strftime('%d %b %Y') + ")"
-        if self.name is None: return self.description
-        return self.name
+        if self.date is not None and self.type != "Person":
+            return self.name + " (" + self.date.strftime('%d %b %Y') + ")" + " [" + str(self.time_changed) + "]"
+        if self.name is None:
+            return self.description + " [" + str(self.time_changed) + "]"
+
+        result = self.name
+        result += " [" + str(self.time_changed) + "]"
+        return result
 
     def children(self):
         children = Note.objects.filter(parent=self).order_by('-time_changed')
