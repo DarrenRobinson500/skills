@@ -8,14 +8,40 @@ class DateInput(forms.DateInput):
 
 
 WIDGETS = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'actions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-            'type': forms.Select(attrs={'class': 'form-control'}),
-            'parent': forms.Select(attrs={'class': 'form-control'}),
-            "date": forms.DateInput(attrs={"class": "form-control", 'type': 'date'}),
-            'status': forms.Select(attrs={'class': 'form-control'}),
+    'name': forms.TextInput(attrs={'class': 'form-control'}),
+    'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+    'actions': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+    'type': forms.Select(attrs={'class': 'form-control'}),
+    'parent': forms.Select(attrs={'class': 'form-control'}),
+    "date": forms.DateInput(attrs={"class": "form-control", 'type': 'date'}),
+    'status': forms.Select(attrs={'class': 'form-control'}),
+    'size_x': forms.TextInput(attrs={'class': 'form-control'}),
+    'size_y': forms.TextInput(attrs={'class': 'form-control'}),
+    'label': forms.TextInput(attrs={'class': 'form-control'}),
+    'colour': forms.Select(attrs={'class': 'form-control'}),
+    'fontcolour': forms.Select(attrs={'class': 'form-control'}),
+    'shape': forms.Select(attrs={'class': 'form-control'}),
+    'node_a': forms.Select(attrs={'class': 'form-control'}),
+    'node_b': forms.Select(attrs={'class': 'form-control'}),
 }
+
+class MindmapForm(ModelForm):
+    class Meta:
+        model = Mindmap
+        fields = ('name','description','size_x', 'size_y',)
+        widgets = WIDGETS
+
+class NodeForm(ModelForm):
+    class Meta:
+        model = Node
+        fields = ('label','description', 'colour','fontcolour', 'shape')
+        widgets = WIDGETS
+
+class EdgeForm(ModelForm):
+    class Meta:
+        model = Edge
+        fields = ('node_a','node_b',)
+        widgets = WIDGETS
 
 class BaseForm(ModelForm):
     class Meta:
@@ -26,7 +52,7 @@ class BaseForm(ModelForm):
 class PersonForm(ModelForm):
     class Meta:
         model = Note
-        fields = ('name','date')
+        fields = ('name','date','description')
         labels = {'date': 'Birthday',}
 
         widgets = WIDGETS
@@ -114,8 +140,6 @@ class MedicalForm(ModelForm):
         fields = ('name','description',)
         widgets = WIDGETS
 
-
-
 class PeopleForm(ModelForm):
     class Meta:
         model = People
@@ -135,3 +159,4 @@ class FileForm(ModelForm):
             'name': forms.TextInput(attrs={'class':'form-control','placeholder':''}),
             'document': forms.FileInput(attrs={'class': 'form-control', 'placeholder': ''}),
         }
+

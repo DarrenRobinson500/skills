@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 
-<h1>{{heading}} '{{type}}{{item|safe}}'</h1>
+<h1>{{heading}} {% if type is not None %} '{{type}}{{item|safe}}'{% endif %}</h1>
 <br>
     <form action='' method=POST>
     {% csrf_token %}
@@ -26,6 +26,7 @@
             {% endfor %}
             </tr>
         </table>
+        {{ form.media }}
     <input type = 'submit' value = 'Save' class='btn btn-outline-secondary btn-sm'>
     </form>
 <br><br>

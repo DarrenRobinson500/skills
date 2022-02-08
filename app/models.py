@@ -1,7 +1,7 @@
 from django.db import models
 import datetime
 from datetime import datetime, timedelta, date
-
+from ckeditor.fields import RichTextField
 
 class Role_Level(models.Model):
     role_level = models.CharField('Description', max_length=255,null=True, blank=True)
@@ -125,7 +125,8 @@ STATUS = [("Not asked","Not asked"), ("Requested and Open","Requested and Open")
 
 class Note(models.Model):
     name = models.CharField(max_length=255,null=True)
-    description = models.TextField(null=True, blank=True)
+    description = RichTextField(null=True, blank=True)
+    fancy_description = RichTextField(null=True, blank=True)
     actions = models.TextField(null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
     type = models.CharField(max_length=64,null=True,choices=TYPES)
@@ -183,3 +184,39 @@ class Note(models.Model):
         bday_next_year = date(current_year + 1, bday.month, bday.day)
         if date.today() > bday_this_year: return bday_next_year
         else: return bday_this_year
+
+class Mindmap(models.Model):
+    name = models.CharField(max_length=255,null=True, blank=True)
+    description = models.CharField(max_length=255,null=True, blank=True)
+    size_x = models.IntegerField(null=True, blank=True)
+    size_y = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Node(models.Model):
+    COLOURS = [("blue", "blue"), ("green", "green"), ("red", "red"), ("orange", "orange"), ("black", "black"), ("white", "white")]
+    SHAPE = [("rect", "rect"), ]
+
+    map = models.ForeignKey(Mindmap,null=True,blank=True,on_delete = models.SET_NULL)
+    label = models.CharField(max_length=255,null=True)
+    description = models.TextField(null=True, blank=True)
+    colour = models.CharField(max_length=255,null=True,choices=COLOURS, default="blue")
+    fontcolour = models.CharField(max_length=255,null=True,choices=COLOURS, default="white")
+    shape = models.CharField(max_length=255,null=True,choices=SHAPE, default="rect")
+
+    def __str__(self):
+        return self.label
+
+class Edge(models.Model):
+    map = models.ForeignKey(Mindmap,null=True,blank=True,on_delete=models.CASCADE)
+    node_a = models.ForeignKey(Node,null=True,blank=True,on_delete=models.CASCADE,related_name='start')
+    node_b = models.ForeignKey(Node,null=True,blank=True,on_delete=models.CASCADE,related_name='end')
+
+    def __str__(self):
+        start = ""
+        end = ""
+        if self.node_a is not None: start = self.node_a.label
+        if self.node_b is not None: start = self.node_b.label
+        return start + " to " + end
+

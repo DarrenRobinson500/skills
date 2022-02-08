@@ -5,6 +5,124 @@ from .forms import *
 from .filters import *
 import openpyxl as xl
 from .permissions import user_required
+import graphviz
+
+def mindmap(request, id=None, selected_id=None):
+    maps = Mindmap.objects.all()
+    map = None
+    selected_item = None
+    print("selected_id:", selected_id)
+    if selected_id is not None and selected_id != "None":
+        selected_item = Node.objects.get(id=selected_id)
+        map = selected_item.map
+        print("mindmap", "A")
+        create_map(id, selected_item)
+    elif id is not None and id != "None":
+        map = Mindmap.objects.get(id=id)
+        print("mindmap", "B")
+        create_map(id)
+    context = {'maps': maps, 'map': map, 'selected_item': selected_item}
+    return render(request, 'mindmap.html', context)
+
+def new_mindmap(request, id=None):
+    map = Mindmap.objects.filter(id=id).first()
+    form = MindmapForm(request.POST or None, instance=map)
+    if form.is_valid():
+        new = form.save()
+        return redirect("/mindmap/"+str(new.id))
+    context = {'heading': "New Mind Map", 'form': form}
+    return render(request, 'new.html', context)
+
+def new_map_item(request, type, map_id, selected_id=None):
+    map = Mindmap.objects.filter(id=map_id).first()
+    selected_item = Node.objects.filter(id=selected_id).first()
+    if   type == "node" : form = NodeForm(request.POST or None)
+    elif type == "edge" : form = EdgeForm(request.POST or None)
+    else                : form = None
+    if form.is_valid():
+        new = form.save()
+        new.map = map
+        new.save()
+        if type == "node" and selected_id is not None:
+            new_edge = Edge(node_a=selected_item, node_b=new, map=map)
+            new_edge.save()
+            new.colour = selected_item.colour
+            new.save()
+            return redirect("/mindmap/"+str(map_id) + "/" + str(selected_id))
+        return redirect("/mindmap/"+str(map_id))
+    heading = "New " + type
+    if selected_id is not None: heading = "Add node to " + str(selected_item)
+    context = {'heading': heading, 'map': map, 'form': form}
+    return render(request, 'new.html', context)
+
+def edit_node(request, selected_id):
+    selected_item = Node.objects.filter(id=selected_id).first()
+    map = selected_item.map
+    form = NodeForm(request.POST or None, instance=selected_item)
+    if form.is_valid():
+        form.save()
+        return redirect("/mindmap/"+str(map.id)+"/"+str(selected_id))
+    heading = "Edit " + str(selected_item)
+    context = {'heading': heading, 'map': map, 'form': form}
+    return render(request, 'new.html', context)
+
+def change_colour(request, selected_id, colour):
+    selected_item = Node.objects.filter(id=selected_id).first()
+    map = selected_item.map
+    selected_item.colour = colour
+    selected_item.save()
+    return redirect("/mindmap/" + str(map.id) + "/" + str(selected_id))
+
+
+def delete_node(request, map_id, id):
+    Node.objects.get(id=id).delete()
+    return redirect("/mindmap/"+str(map_id))
+
+
+dot = graphviz.Digraph(comment="Graphic")
+def create_map(id, selected=None):
+    global dot
+    map = Mindmap.objects.filter(id=id).first()
+    reset_graph(map)
+    print("create_map", selected)
+
+    graphviz_logic(map, selected)
+    return
+
+def reset_graph(map=None):
+
+    global dot
+    dot = graphviz.Digraph(comment="Graphic", format='svg', graph_attr={'concentrate': 'true',})
+    dot.strict = True
+    x = 12
+    y = 100
+    if map is not None and map.size_x is not None: x = map.size_x
+    if map is not None and map.size_y is not None: y = map.size_y
+    size = f"{x},{y}"
+
+    dot.attr(rankdir='LR', size=size)
+    return
+
+def graphviz_logic(map, selected=None):
+    print("graphviz_logic", selected)
+    nodes = Node.objects.filter(map=map)
+    edges = Edge.objects.filter(map=map)
+    for x in nodes:
+        url = "/mindmap/" + str(map.id) + "/" + str(x.id)
+        fontcolour = x.fontcolour
+        if selected is not None and str(x.id) == str(selected.id):
+            fontcolour = "yellow"
+        dot.node(str(x.id), x.label, tooltip=x.description,
+                 URL=url, shape=x.shape, style='filled, rounded', color=x.colour, fontname='arial',fillcolor=x.colour, fontcolor=fontcolour, width='2')
+
+
+    for x in edges:
+        dot.edge(str(x.node_a.id), str(x.node_b.id))
+
+    dot.render('media/files/' + map.name).replace('\\', '/')
+    return
+
+
 
 @user_required
 def life(request):
@@ -101,6 +219,7 @@ def update_timestamp(item):
 
         update_timestamp(item.parent)
     return
+
 
 @user_required
 def new(request, type=None, parent_id=None, return_page=None):

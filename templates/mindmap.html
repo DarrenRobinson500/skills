@@ -1,0 +1,47 @@
+{% extends 'base.html'%}
+{% block content %}
+{% load svg %}
+
+<div class="row">
+    <div class="col-sm-5">
+        {% if map is None %}
+            <h1>Mind Map</h1>
+            <a href='{% url 'new_mindmap' %}' class='btn btn-outline-secondary btn-sm'>New Mind Map</a><br><br>
+        {% else %}
+            <h1>Mind Map: {{ map }} </h1>
+            <a href='{% url 'new_mindmap' map.id %}' class='btn btn-outline-secondary btn-sm'>Edit Mind Map: {{ map }}</a>
+            <a href='{% url 'new_map_item' 'node' map.id %}' class='btn btn-outline-secondary btn-sm'>New Node</a>
+            <a href='{% url 'new_map_item' 'edge' map.id %}' class='btn btn-outline-secondary btn-sm'>New Edge</a>
+        {% endif %}
+    </div>
+    <div class="col-sm-5">
+        {% if selected_item is not None %}
+            <h1>{{selected_item}}</h1>
+            {% if selected_item.description is not None %}
+                {{ selected_item.description }}<br>
+            {% endif %}
+            <a href='{% url 'new_map_item' 'node' map.id selected_item.id %}' class='btn btn-outline-secondary btn-sm'>Add Node</a>
+            <a href='{% url 'edit_node' selected_item.id %}' class='btn btn-outline-secondary btn-sm'>Edit Node</a>
+            <a href='{% url 'delete_node' map.id selected_item.id %}' class='btn btn-outline-secondary btn-sm'>Delete Node</a><br>
+            <a href='{% url 'change_colour' selected_item.id 'blue' %}' class='btn btn-outline-secondary btn-sm'>Blue</a>
+            <a href='{% url 'change_colour' selected_item.id 'green' %}' class='btn btn-outline-secondary btn-sm'>Green</a>
+            <a href='{% url 'change_colour' selected_item.id 'orange' %}' class='btn btn-outline-secondary btn-sm'>Orange</a>
+
+        <br>
+        {% endif %}
+    </div>
+</div>
+<hr>
+{% if map is not None %}
+<h1 class="logo" width="1100">{% svg map.name %}</h1>
+{% endif %}
+<br><br>
+
+
+
+<h2>List of maps</h2>
+{% for x in maps %}
+    <a href='{% url 'mindmap' x.id %}' >{{x}}</a><br><br>
+{% endfor %}
+
+{% endblock %}

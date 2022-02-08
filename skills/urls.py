@@ -1,8 +1,9 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from app import views
 from django.conf import settings
 from django.conf.urls.static import static
+import tinymce
 
 
 urlpatterns = [
@@ -10,6 +11,16 @@ urlpatterns = [
     path('', views.notes_list, name='notes_list'),
     path('calendar', views.calendar, name='calendar'),
     path('life', views.life, name='life'),
+    path('new_mindmap', views.new_mindmap, name='new_mindmap'),
+    path('new_mindmap/<id>', views.new_mindmap, name='new_mindmap'),
+    path('new_map_item/<type>/<map_id>', views.new_map_item, name='new_map_item'),
+    path('new_map_item/<type>/<map_id>/<selected_id>', views.new_map_item, name='new_map_item'),
+    path('delete_node/<map_id>/<id>', views.delete_node, name='delete_node'),
+    path('edit_node/<selected_id>', views.edit_node, name='edit_node'),
+    path('change_colour/<selected_id>/<colour>', views.change_colour, name='change_colour'),
+    path('mindmap', views.mindmap, name='mindmap'),
+    path('mindmap/<id>', views.mindmap, name='mindmap'),
+    path('mindmap/<id>/<selected_id>', views.mindmap, name='mindmap'),
     path('new', views.new, name='new'),
     path('new/<type>', views.new, name='new'),
     path('new/<type>/<parent_id>', views.new, name='new'),
@@ -53,6 +64,7 @@ urlpatterns = [
     path('file_list', views.file_list, name='file_list'),
     path('file_upload', views.file_upload, name='file_upload'),
     path('file_delete/<file_id>', views.file_delete, name='file_delete'),
+    # path('tinymce/', include(tinymce.urls))
 ]
 
 if settings.DEBUG:

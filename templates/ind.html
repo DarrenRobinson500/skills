@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="row">
-    <div class="col-sm-5">
+    <div class="col-sm-9">
         <h1>{{item}} {{item.type_x}}
         {% if item.parent is None %}
             <a href='{% url 'notes_list' %}' class='btn btn-outline-secondary btn-sm'>Home Page</a>
@@ -25,11 +25,13 @@
                     {% endfor %}
                     </tr>
                 </table>
+                {{ form.media }}
+
                 <input type = 'submit' value = 'Update' class='btn btn-outline-secondary btn-sm'>
             </form>
     </div>
-    <div class="col-sm-7">
-        <h3>Children (3 Levels)</h3>
+    <div class="col-sm-3">
+        <h3>Children</h3>
         {% if item.parent.parent is not None %}
             <a href='{% url 'ind' item.parent.parent.id %}' >{{item.parent.parent}}</a>
             /
