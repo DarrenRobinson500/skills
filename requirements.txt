@@ -56,7 +56,6 @@ pyperclip==1.8.2
 PyRect==0.1.4
 PyScreeze==0.1.28
 
-pywin32==301
 PyYAML==5.4.1
 requests==2.25.1
 rsa==4.7.2
