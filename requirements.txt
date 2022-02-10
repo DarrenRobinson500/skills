@@ -55,7 +55,6 @@ pyparsing==3.0.6
 pyperclip==1.8.2
 PyRect==0.1.4
 PyScreeze==0.1.28
-python-dateutil==2.8.1
 
 pywin32==301
 PyYAML==5.4.1
