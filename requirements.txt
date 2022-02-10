@@ -56,7 +56,6 @@ pyperclip==1.8.2
 PyRect==0.1.4
 PyScreeze==0.1.28
 python-dateutil==2.8.1
-python-decouple==3.4
 
 pywin32==301
 PyYAML==5.4.1
