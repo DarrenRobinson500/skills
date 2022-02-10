@@ -57,7 +57,6 @@ PyRect==0.1.4
 PyScreeze==0.1.28
 python-dateutil==2.8.1
 python-decouple==3.4
-python-docx==0.8.10
 
 pywin32==301
 PyYAML==5.4.1
