@@ -7,7 +7,7 @@ except:
     pass
 
 # from ._local import *
-# git add .
+
 # git add .
 # git commit -m “Heroku Push”
 # git push
