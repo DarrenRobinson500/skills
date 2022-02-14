@@ -83,3 +83,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SVG_DIRS=[
     os.path.join(BASE_DIR, 'media/files/')
 ]
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Strike'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent'],
+            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['TextColor', 'BGColor', ],
+            # ['Link', 'Unlink'],
+            # ['RemoveFormat', 'Source']
+        ]
+    }
+}
